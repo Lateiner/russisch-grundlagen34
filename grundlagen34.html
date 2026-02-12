@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russische Grammatik: Relativpronomen</title>
+    <!-- Polyfill für Drag & Drop auf Touch-Geräten -->
+    <script src="https://cdn.jsdelivr.net/npm/drag-drop-touch@1.3.1/DragDropTouch.js"></script>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --container-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--container-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+
+        h1 {
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+        }
+
+        .intro-box {
+            background-color: #e8eaf6;
+            padding: 20px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 5px;
+            margin-bottom: 30px;
+        }
+
+        .exercise-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            background-color: #fff;
+        }
+
+        .exercise-title {
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            display: block;
+            color: #555;
+        }
+
+        .question-row {
+            margin-bottom: 15px;
+            padding: 10px;
+            background-color: #fafafa;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Form Elements Styling */
+        select {
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 1em;
+            background-color: white;
+            cursor: pointer;
+        }
+
+        label {
+            cursor: pointer;
+            margin-right: 15px;
+        }
+
+        /* Feedback Classes */
+        .correct-bg {
+            background-color: rgba(76, 175, 80, 0.15) !important;
+            border: 1px solid var(--correct-color);
+        }
+
+        .incorrect-bg {
+            background-color: rgba(244, 67, 54, 0.15) !important;
+            border: 1px solid var(--incorrect-color);
+        }
+
+        .feedback-icon {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+        
+        .feedback-icon.correct::after { content: "✓"; color: var(--correct-color); }
+        .feedback-icon.incorrect::after { content: "✗"; color: var(--incorrect-color); }
+
+        /* Button Group */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.3s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-check { background-color: var(--correct-color); }
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        /* Drag and Drop Specifics */
+        .draggable-container {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            min-height: 50px;
+            padding: 10px;
+            background: #eee;
+            border-radius: 5px;
+            align-items: center;
+        }
+
+        .draggable {
+            background-color: #fff;
+            border: 1px solid #3f51b5;
+            color: #3f51b5;
+            font-weight: bold;
+            padding: 5px 15px;
+            border-radius: 4px;
+            cursor: grab;
+            user-select: none;
+            display: inline-block;
+        }
+        
+        .draggable:active {
+            cursor: grabbing;
+        }
+
+        .dropzone {
+            display: inline-flex;
+            justify-content: center;
+            align-items: center;
+            min-width: 120px;
+            min-height: 36px;
+            border: 2px dashed #ccc;
+            background-color: #fff;
+            vertical-align: middle;
+            margin: 0 5px;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .dropzone.drag-over {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+        }
+
+        /* Wenn ein Draggable in der Dropzone liegt, soll es keinen Rand haben, der stört */
+        .dropzone .draggable {
+            margin: 0;
+            border: none;
+            background: transparent;
+            color: #000;
+            padding: 0;
+        }
+
+        /* Radio Button Styling */
+        .radio-option {
+            display: inline-block;
+            margin-right: 15px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Russische Grammatik: Relativpronomen</h1>
+
+    <div class="intro-box">
+        <h3>Einführung: Verwendung von КОТОРЫЙ, КОТОРАЯ, КОТОРОЕ</h3>
+        <p>Das Relativpronomen verbindet einen Hauptsatz mit einem Nebensatz. Es entspricht dem deutschen „der, die, das“ oder „welcher, welche, welches“.</p>
+        <p><strong>Die goldene Regel:</strong></p>
+        <ol>
+            <li>Das <strong>Geschlecht</strong> (m/f/n) und der <strong>Numerus</strong> (Singular/Plural) richten sich nach dem <strong>Bezugswort im Hauptsatz</strong>.</li>
+            <li>Der <strong>Fall (Kasus)</strong> richtet sich nach der Funktion des Pronomens im <strong>Nebensatz</strong> (Subjekt, Objekt, nach Präposition).</li>
+        </ol>
+        <p><strong>Beispiele:</strong></p>
+        <ul>
+            <li>Der Student, <strong>der</strong> liest. = Студент (m), <strong>который</strong> (Nom) читает.</li>
+            <li>Das Buch, <strong>das</strong> ich lese. = Книга (f), <strong>которую</strong> (Akk) я читаю.</li>
+            <li>Der Freund, <strong>mit dem</strong> ich spreche. = Друг (m), <strong>с которым</strong> (Instr) я говорю.</li>
+        </ul>
+    </div>
+
+    <!-- Übung 1: Maskulinum Nominativ -->
+    <div class="exercise-card" id="ex1">
+        <span class="exercise-title">Aufgabe 1: Maskulinum Nominativ (Subjekt)</span>
+        <p>Wählen Sie die richtige Form. „Das ist der Student, der hier wohnt.“</p>
+        <div class="question-row">
+            Это студент, <select data-correct="который">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которая">которая</option>
+                <option value="которое">которое</option>
+            </select> здесь живет.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex1')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex1')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex1')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 2: Femininum Nominativ -->
+    <div class="exercise-card" id="ex2">
+        <span class="exercise-title">Aufgabe 2: Femininum Nominativ (Subjekt)</span>
+        <p>Wählen Sie die richtige Form. „Das ist die Studentin, die gestern angekommen ist.“</p>
+        <div class="question-row">
+            Это студентка, 
+            <label class="radio-option"><input type="radio" name="ex2_q1" value="который"> который</label>
+            <label class="radio-option"><input type="radio" name="ex2_q1" value="которая"> которая</label>
+            <label class="radio-option"><input type="radio" name="ex2_q1" value="которую"> которую</label>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkRadio('ex2', 'koтopaя')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetRadio('ex2')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveRadio('ex2', 'koтopaя')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 3: Neutrum Nominativ -->
+    <div class="exercise-card" id="ex3">
+        <span class="exercise-title">Aufgabe 3: Neutrum Nominativ (Subjekt)</span>
+        <p>Wählen Sie die richtige Form. „Hier liegt das Schreiben, das heute gekommen ist.“</p>
+        <div class="question-row">
+            Здесь лежит письмо, <select data-correct="которое">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которая">которая</option>
+                <option value="которое">которое</option>
+            </select> пришло сегодня.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex3')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex3')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex3')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 4: Maskulinum Akkusativ (Unbelebt) -->
+    <div class="exercise-card" id="ex4">
+        <span class="exercise-title">Aufgabe 4: Maskulinum Akkusativ (Unbelebt)</span>
+        <p>Achtung: Unbelebte männliche Substantive haben im Akkusativ die gleiche Form wie im Nominativ. „Wo ist der Bus, den du siehst?“</p>
+        <div class="question-row">
+            Где автобус, 
+            <label class="radio-option"><input type="radio" name="ex4_q1" value="который"> который</label>
+            <label class="radio-option"><input type="radio" name="ex4_q1" value="которого"> которого</label>
+            ты видишь?
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkRadio('ex4', 'который')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetRadio('ex4')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveRadio('ex4', 'который')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 5: Maskulinum Akkusativ (Belebt) -->
+    <div class="exercise-card" id="ex5">
+        <span class="exercise-title">Aufgabe 5: Maskulinum Akkusativ (Belebt)</span>
+        <p>Achtung: Belebte männliche Substantive haben im Akkusativ die Endung -ОГО. „Das ist der Bruder, den ich liebe.“</p>
+        <div class="question-row">
+            Это брат, <select data-correct="которого">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+            </select> я люблю.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex5')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex5')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex5')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 6: Drag & Drop Geschlecht -->
+    <div class="exercise-card" id="ex6">
+        <span class="exercise-title">Aufgabe 6: Geschlechter zuordnen (Nominativ)</span>
+        <p>Ziehen Sie das passende Wort in den Satz. Das Wort verschwindet aus dem Vorrat, wenn Sie es platzieren. Sie können es zurücklegen, indem Sie es im Satz anklicken.</p>
+        
+        <div class="draggable-container" id="ex6-source">
+            <div class="draggable" draggable="true" id="drag-m" data-val="который">который</div>
+            <div class="draggable" draggable="true" id="drag-f" data-val="которая">которая</div>
+            <div class="draggable" draggable="true" id="drag-n" data-val="которое">которое</div>
+        </div>
+
+        <div class="question-row">
+            Дом (m), <div class="dropzone" data-accept="который"></div> стоит там.
+        </div>
+        <div class="question-row">
+            Море (n), <div class="dropzone" data-accept="которое"></div> я люблю.
+        </div>
+        <div class="question-row">
+            Машина (f), <div class="dropzone" data-accept="которая"></div> едет быстро.
+        </div>
+
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkDnD('ex6')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetDnD('ex6')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveDnD('ex6')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 7: Femininum Akkusativ -->
+    <div class="exercise-card" id="ex7">
+        <span class="exercise-title">Aufgabe 7: Femininum Akkusativ</span>
+        <p>Wählen Sie die richtige Form (-УЮ). „Das ist die Zeitung, die ich lese.“</p>
+        <div class="question-row">
+            Это газета, <select data-correct="которую">
+                <option value="">---</option>
+                <option value="которая">которая</option>
+                <option value="которой">которой</option>
+                <option value="которую">которую</option>
+            </select> я читаю.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex7')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex7')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex7')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 8: Präpositiv (о + 6. Fall) -->
+    <div class="exercise-card" id="ex8">
+        <span class="exercise-title">Aufgabe 8: Präpositiv (mit „o“)</span>
+        <p>Ergänzen Sie den Satz. „Das ist der Film, über den wir gesprochen haben.“</p>
+        <div class="question-row">
+            Это фильм, о <select data-correct="котором">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="котором">котором</option>
+                <option value="которому">которому</option>
+            </select> мы говорили.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex8')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex8')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex8')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 9: Instrumental (c + 5. Fall) -->
+    <div class="exercise-card" id="ex9">
+        <span class="exercise-title">Aufgabe 9: Instrumental (mit „c“)</span>
+        <p>Wählen Sie die richtige Form. „Das ist die Freundin, mit der ich ins Kino gehe.“</p>
+        <div class="question-row">
+            Это подруга, с 
+            <label class="radio-option"><input type="radio" name="ex9_q1" value="которой"> которой</label>
+            <label class="radio-option"><input type="radio" name="ex9_q1" value="которую"> которую</label>
+            я иду в кино.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkRadio('ex9', 'которой')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetRadio('ex9')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveRadio('ex9', 'которой')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 10: Dativ (к + 3. Fall) -->
+    <div class="exercise-card" id="ex10">
+        <span class="exercise-title">Aufgabe 10: Dativ (mit „к“)</span>
+        <p>„Das ist der Arzt, zu dem ich gehe.“</p>
+        <div class="question-row">
+            Это врач, к <select data-correct="которому">
+                <option value="">---</option>
+                <option value="которому">которому</option>
+                <option value="которого">которого</option>
+                <option value="котором">котором</option>
+            </select> я иду.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex10')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex10')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex10')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 11: Genitiv (Negation/Besitz) -->
+    <div class="exercise-card" id="ex11">
+        <span class="exercise-title">Aufgabe 11: Genitiv (2. Fall)</span>
+        <p>Verwenden Sie den Genitiv, wenn etwas nicht vorhanden ist („нет“). „Das ist der Mann, der nicht zu Hause ist.“</p>
+        <div class="question-row">
+            Это мужчина, <select data-correct="которого">
+                <option value="">---</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+            </select> нет дома.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkSelect('ex11')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetSelect('ex11')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveSelect('ex11')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Übung 12: Plural -->
+    <div class="exercise-card" id="ex12">
+        <span class="exercise-title">Aufgabe 12: Plural (Mehrzahl)</span>
+        <p>Im Plural ist die Form für Nominativ für alle Geschlechter gleich: КОТОРЫЕ. „Das sind die Leute, die arbeiten.“</p>
+        <div class="question-row">
+            Это люди, 
+            <label class="radio-option"><input type="radio" name="ex12_q1" value="которые"> которые</label>
+            <label class="radio-option"><input type="radio" name="ex12_q1" value="которых"> которых</label>
+            работают.
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkRadio('ex12', 'которые')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetRadio('ex12')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveRadio('ex12', 'которые')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // --- Logic for Select Dropdowns ---
+    function checkSelect(exId) {
+        const container = document.getElementById(exId);
+        const selects = container.querySelectorAll('select');
+        
+        selects.forEach(select => {
+            const row = select.parentElement;
+            const correctVal = select.getAttribute('data-correct');
+            const feedback = row.querySelector('.feedback-icon');
+            
+            // Remove old classes
+            select.classList.remove('correct-bg', 'incorrect-bg');
+            feedback.classList.remove('correct', 'incorrect');
+
+            if (select.value === correctVal) {
+                select.classList.add('correct-bg');
+                feedback.classList.add('correct');
+            } else {
+                select.classList.add('incorrect-bg');
+                feedback.classList.add('incorrect');
+            }
+        });
+    }
+
+    function resetSelect(exId) {
+        const container = document.getElementById(exId);
+        const selects = container.querySelectorAll('select');
+        selects.forEach(select => {
+            select.value = "";
+            select.classList.remove('correct-bg', 'incorrect-bg');
+            select.parentElement.querySelector('.feedback-icon').classList.remove('correct', 'incorrect');
+        });
+    }
+
+    function solveSelect(exId) {
+        const container = document.getElementById(exId);
+        const selects = container.querySelectorAll('select');
+        selects.forEach(select => {
+            select.value = select.getAttribute('data-correct');
+            select.classList.remove('incorrect-bg');
+            select.classList.add('correct-bg');
+            select.parentElement.querySelector('.feedback-icon').className = 'feedback-icon correct';
+        });
+    }
+
+    // --- Logic for Radio Buttons ---
+    function checkRadio(exId, correctVal) {
+        const container = document.getElementById(exId);
+        const radios = container.querySelectorAll('input[type="radio"]');
+        const feedback = container.querySelector('.feedback-icon');
+        let selectedVal = null;
+
+        radios.forEach(r => {
+            if (r.checked) selectedVal = r.value;
+        });
+
+        const questionRow = container.querySelector('.question-row');
+        questionRow.classList.remove('correct-bg', 'incorrect-bg');
+        feedback.classList.remove('correct', 'incorrect');
+
+        if (selectedVal === correctVal) {
+            questionRow.classList.add('correct-bg');
+            feedback.classList.add('correct');
+        } else {
+            questionRow.classList.add('incorrect-bg');
+            feedback.classList.add('incorrect');
+        }
+    }
+
+    function resetRadio(exId) {
+        const container = document.getElementById(exId);
+        const radios = container.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => r.checked = false);
+        const questionRow = container.querySelector('.question-row');
+        questionRow.classList.remove('correct-bg', 'incorrect-bg');
+        container.querySelector('.feedback-icon').classList.remove('correct', 'incorrect');
+    }
+
+    function solveRadio(exId, correctVal) {
+        const container = document.getElementById(exId);
+        const radios = container.querySelectorAll('input[type="radio"]');
+        radios.forEach(r => {
+            if (r.value === correctVal) r.checked = true;
+        });
+        const questionRow = container.querySelector('.question-row');
+        questionRow.classList.remove('incorrect-bg');
+        questionRow.classList.add('correct-bg');
+        container.querySelector('.feedback-icon').className = 'feedback-icon correct';
+    }
+
+    // --- Logic for Drag and Drop (Moved Elements) ---
+    
+    // Drag Events
+    document.addEventListener('dragstart', function(e) {
+        if (e.target.classList.contains('draggable')) {
+            e.dataTransfer.setData('text', e.target.id);
+            e.dataTransfer.effectAllowed = 'move'; 
+        }
+    });
+
+    // Dropzone Events
+    const dropzones = document.querySelectorAll('.dropzone');
+    dropzones.forEach(dz => {
+        dz.addEventListener('dragover', function(e) {
+            e.preventDefault(); 
+            dz.classList.add('drag-over');
+            e.dataTransfer.dropEffect = 'move';
+        });
+
+        dz.addEventListener('dragleave', function(e) {
+            dz.classList.remove('drag-over');
+        });
+
+        dz.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dz.classList.remove('drag-over');
+            
+            const id = e.dataTransfer.getData('text');
+            const draggedElement = document.getElementById(id);
+            const sourceContainer = document.getElementById('ex6-source');
+
+            if (draggedElement) {
+                // Falls schon etwas drin liegt, zurück in den Source Container schieben
+                if (dz.children.length > 0) {
+                    const existingChild = dz.firstElementChild;
+                    sourceContainer.appendChild(existingChild);
+                }
+                
+                // Element in die Dropzone bewegen
+                dz.appendChild(draggedElement);
+                
+                // Styles resetten
+                dz.classList.remove('correct-bg', 'incorrect-bg');
+            }
+        });
+        
+        // Klick auf Dropzone: Element zurücklegen
+        dz.addEventListener('click', function() {
+            if (dz.children.length > 0) {
+                const child = dz.firstElementChild;
+                const sourceContainer = document.getElementById('ex6-source');
+                sourceContainer.appendChild(child);
+                dz.classList.remove('correct-bg', 'incorrect-bg');
+            }
+        });
+    });
+
+    function checkDnD(exId) {
+        const container = document.getElementById(exId);
+        const drops = container.querySelectorAll('.dropzone');
+        
+        drops.forEach(drop => {
+            const correct = drop.getAttribute('data-accept');
+            drop.classList.remove('correct-bg', 'incorrect-bg');
+            
+            // Wir prüfen das Kind-Element
+            if (drop.children.length > 0) {
+                const child = drop.firstElementChild;
+                const val = child.getAttribute('data-val');
+                
+                if (val === correct) {
+                    drop.classList.add('correct-bg');
+                } else {
+                    drop.classList.add('incorrect-bg');
+                }
+            } else {
+                drop.classList.add('incorrect-bg'); // Leer ist auch falsch
+            }
+        });
+    }
+
+    function resetDnD(exId) {
+        const container = document.getElementById(exId);
+        const drops = container.querySelectorAll('.dropzone');
+        const source = document.getElementById(exId + '-source');
+        
+        // Alle Draggables finden, egal wo sie sind
+        const draggables = container.querySelectorAll('.draggable');
+        
+        draggables.forEach(drag => {
+            // Zurück in den Source Container bewegen
+            source.appendChild(drag);
+        });
+
+        drops.forEach(drop => {
+            drop.classList.remove('correct-bg', 'incorrect-bg');
+        });
+    }
+
+    function solveDnD(exId) {
+        const container = document.getElementById(exId);
+        const drops = container.querySelectorAll('.dropzone');
+        const source = document.getElementById(exId + '-source');
+        
+        // Zuerst alles zurücksetzen, um Chaos zu vermeiden
+        resetDnD(exId);
+        
+        drops.forEach(drop => {
+            const correctVal = drop.getAttribute('data-accept');
+            // Element im Source suchen, das diesen Wert hat
+            const correctEl = Array.from(source.children).find(el => el.getAttribute('data-val') === correctVal);
+            
+            if (correctEl) {
+                drop.appendChild(correctEl);
+                drop.classList.add('correct-bg');
+            }
+        });
+    }
+
+</script>
+
+</body>
+</html>
