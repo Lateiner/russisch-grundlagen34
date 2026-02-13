@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Satz-Puzzle</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --neutral-border: #ccc;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Puzzle Container --- */
+        .puzzle-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+            transition: all 0.3s;
+        }
+
+        .german-translation {
+            font-style: italic;
+            color: #666;
+            margin-bottom: 15px;
+            border-left: 3px solid #ccc;
+            padding-left: 10px;
+        }
+
+        /* Die Bereiche für die Wörter */
+        .area-label {
+            font-size: 0.85rem;
+            color: #888;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .answer-area, .pool-area {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 50px;
+            padding: 10px;
+            border-radius: 6px;
+            transition: background-color 0.3s;
+        }
+
+        /* Antwortbereich (Leer) */
+        .answer-area {
+            background-color: #f5f5f5;
+            border: 2px dashed #bbb;
+            margin-bottom: 15px;
+            align-items: center;
+        }
+
+        /* Vorrat (Pool) */
+        .pool-area {
+            background-color: #e3f2fd; /* Hellblau */
+            border: 1px solid #bbdefb;
+        }
+
+        /* Die Wort-Bausteine */
+        .word-brick {
+            background-color: #fff;
+            border: 1px solid var(--primary-color);
+            color: var(--primary-color);
+            padding: 8px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            user-select: none;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.1s, background-color 0.2s;
+            font-weight: 500;
+        }
+
+        .word-brick:hover {
+            background-color: #e8eaf6;
+            transform: translateY(-2px);
+        }
+
+        .word-brick:active {
+            transform: translateY(0);
+        }
+
+        /* Feedback Zustände für den Antwortbereich */
+        .answer-area.correct {
+            background-color: #e8f5e9;
+            border-color: var(--correct-color);
+            border-style: solid;
+        }
+        
+        .answer-area.correct .word-brick {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+            cursor: default; /* Nicht mehr klickbar wenn fertig */
+        }
+
+        .answer-area.incorrect {
+            background-color: #ffebee;
+            border-color: var(--incorrect-color);
+            border-style: solid;
+            animation: shake 0.4s;
+        }
+
+        @keyframes shake {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            50% { transform: translateX(5px); }
+            75% { transform: translateX(-5px); }
+            100% { transform: translateX(0); }
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Satz-Puzzle</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Bringen Sie die Wörter in die richtige Reihenfolge.</p>
+        <p><strong>Bedienung:</strong> Klicken Sie auf ein Wort im blauen Kasten, um es in den Satz einzufügen. Klicken Sie oben auf ein Wort, um es zurückzulegen.</p>
+        <p>Sobald Sie alle Wörter platziert haben, wird das Ergebnis <strong>automatisch geprüft</strong>.</p>
+    </div>
+
+    <!-- Puzzle 1 -->
+    <div class="puzzle-card" id="puzzle1" data-solution="Вот студент, который читает книгу.">
+        <div class="german-translation">Hier ist der Student, der ein Buch liest.</div>
+        
+        <div class="area-label">Ihr Satz:</div>
+        <div class="answer-area"></div>
+        
+        <div class="area-label">Wortvorrat:</div>
+        <div class="pool-area">
+            <!-- Wörter werden per JS gemischt -->
+        </div>
+    </div>
+
+    <!-- Puzzle 2 -->
+    <div class="puzzle-card" id="puzzle2" data-solution="Это дом, в котором я живу.">
+        <div class="german-translation">Das ist das Haus, in dem ich wohne.</div>
+        
+        <div class="area-label">Ihr Satz:</div>
+        <div class="answer-area"></div>
+        
+        <div class="area-label">Wortvorrat:</div>
+        <div class="pool-area"></div>
+    </div>
+
+    <!-- Puzzle 3 -->
+    <div class="puzzle-card" id="puzzle3" data-solution="Где книга, которую ты купил?">
+        <div class="german-translation">Wo ist das Buch, das du gekauft hast?</div>
+        
+        <div class="area-label">Ihr Satz:</div>
+        <div class="answer-area"></div>
+        
+        <div class="area-label">Wortvorrat:</div>
+        <div class="pool-area"></div>
+    </div>
+
+    <!-- Puzzle 4 -->
+    <div class="puzzle-card" id="puzzle4" data-solution="Мы видим друзей, которые гуляют.">
+        <div class="german-translation">Wir sehen die Freunde, die spazieren gehen.</div>
+        
+        <div class="area-label">Ihr Satz:</div>
+        <div class="answer-area"></div>
+        
+        <div class="area-label">Wortvorrat:</div>
+        <div class="pool-area"></div>
+    </div>
+
+    <!-- Puzzle 5 -->
+    <div class="puzzle-card" id="puzzle5" data-solution="Это девушка, с которой я говорил.">
+        <div class="german-translation">Das ist die junge Frau, mit der ich gesprochen habe.</div>
+        
+        <div class="area-label">Ihr Satz:</div>
+        <div class="answer-area"></div>
+        
+        <div class="area-label">Wortvorrat:</div>
+        <div class="pool-area"></div>
+    </div>
+
+    <div class="btn-container">
+        <button class="ctrl-btn btn-reset" onclick="resetAll()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveAll()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Initialisierung beim Laden
+    document.addEventListener('DOMContentLoaded', () => {
+        const puzzles = document.querySelectorAll('.puzzle-card');
+        
+        puzzles.forEach(card => {
+            const solution = card.getAttribute('data-solution');
+            // Satz in Wörter splitten (Satzzeichen bleiben am Wort)
+            const words = solution.split(' ');
+            
+            // Mischen
+            const shuffled = shuffleArray([...words]);
+            
+            const pool = card.querySelector('.pool-area');
+            
+            shuffled.forEach(word => {
+                const span = document.createElement('span');
+                span.classList.add('word-brick');
+                span.textContent = word;
+                span.onclick = function() { moveBrick(this); };
+                pool.appendChild(span);
+            });
+        });
+    });
+
+    // Fisher-Yates Shuffle Algorithmus
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+        return array;
+    }
+
+    // Funktion zum Bewegen der Wörter
+    function moveBrick(brick) {
+        const card = brick.closest('.puzzle-card');
+        const answerArea = card.querySelector('.answer-area');
+        const poolArea = card.querySelector('.pool-area');
+
+        // Wenn bereits richtig gelöst, Interaktion sperren
+        if (answerArea.classList.contains('correct')) return;
+
+        // Logik: Wo ist der Brick gerade?
+        if (brick.parentElement === poolArea) {
+            // Bewege zu Antwort
+            answerArea.appendChild(brick);
+            // Feedback Reset wenn man weitermacht
+            answerArea.classList.remove('incorrect'); 
+        } else {
+            // Bewege zurück zu Pool
+            poolArea.appendChild(brick);
+            answerArea.classList.remove('incorrect');
+        }
+
+        // Automatische Prüfung, wenn Pool leer ist
+        if (poolArea.children.length === 0) {
+            checkSolution(card);
+        }
+    }
+
+    function checkSolution(card) {
+        const answerArea = card.querySelector('.answer-area');
+        const solution = card.getAttribute('data-solution').replace(/\s+/g, ' ').trim();
+        
+        // Den Satz aus den Bausteinen zusammenbauen
+        const userSentence = Array.from(answerArea.children)
+            .map(brick => brick.textContent)
+            .join(' ');
+
+        if (userSentence === solution) {
+            answerArea.classList.add('correct');
+            answerArea.classList.remove('incorrect');
+        } else {
+            answerArea.classList.add('incorrect');
+        }
+    }
+
+    function resetAll() {
+        const puzzles = document.querySelectorAll('.puzzle-card');
+        puzzles.forEach(card => {
+            const answerArea = card.querySelector('.answer-area');
+            const poolArea = card.querySelector('.pool-area');
+            
+            // Alle Bricks zurück in den Pool
+            const bricks = card.querySelectorAll('.word-brick');
+            bricks.forEach(brick => poolArea.appendChild(brick));
+            
+            // Status zurücksetzen
+            answerArea.classList.remove('correct', 'incorrect');
+            
+            // Neu mischen für Abwechslung
+            const allBricks = Array.from(poolArea.children);
+            const shuffled = shuffleArray(allBricks);
+            shuffled.forEach(brick => poolArea.appendChild(brick));
+        });
+    }
+
+    function solveAll() {
+        // Erst resetten, um sauberen Zustand zu haben
+        resetAll();
+        
+        const puzzles = document.querySelectorAll('.puzzle-card');
+        puzzles.forEach(card => {
+            const solution = card.getAttribute('data-solution');
+            const words = solution.split(' ');
+            const answerArea = card.querySelector('.answer-area');
+            const poolArea = card.querySelector('.pool-area');
+            
+            // Wir suchen die passenden Bricks im Pool
+            words.forEach(wordText => {
+                // Finde den ersten Brick im Pool, der diesen Text hat
+                const matchingBrick = Array.from(poolArea.children).find(b => b.textContent === wordText);
+                if (matchingBrick) {
+                    answerArea.appendChild(matchingBrick);
+                }
+            });
+            
+            // Als richtig markieren
+            answerArea.classList.add('correct');
+            answerArea.classList.remove('incorrect');
+        });
+    }
+
+</script>
+
+</body>
+</html>
