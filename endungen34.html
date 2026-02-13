@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Multiple Choice (Endungen)</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ddd;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Fragen-Layout --- */
+        .question-card {
+            background-color: #fff;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .gap {
+            display: inline-block;
+            min-width: 80px;
+            border-bottom: 2px solid #333;
+            margin: 0 5px;
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: bold;
+        }
+
+        /* --- Optionen (Buttons) --- */
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .option-btn {
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            background-color: #fff;
+            cursor: pointer;
+            text-align: left;
+            font-size: 1rem;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+
+        .option-btn:hover {
+            background-color: #f5f5f5;
+            border-color: #bdbdbd;
+        }
+
+        /* Feedback Styles */
+        .option-btn.correct {
+            background-color: #e8f5e9;
+            border-color: var(--correct-color);
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .option-btn.correct::after {
+            content: "✓";
+            position: absolute;
+            right: 15px;
+            color: var(--correct-color);
+            font-weight: bold;
+        }
+
+        .option-btn.incorrect {
+            background-color: #ffebee;
+            border-color: var(--incorrect-color);
+            color: #c62828;
+            opacity: 0.8;
+        }
+
+        .option-btn.incorrect::after {
+            content: "✗";
+            position: absolute;
+            right: 15px;
+            color: var(--incorrect-color);
+            font-weight: bold;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button.control-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.control-btn:hover { opacity: 0.9; }
+        button.control-btn:active { transform: translateY(1px); }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Richtige Endung wählen</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Wählen Sie die richtige Form des Relativpronomens, um die Lücke zu füllen.</p>
+        <p>Achten Sie auf den Kasus (Fall) und das Genus (Geschlecht). Sie erhalten <strong>sofortiges Feedback</strong>.</p>
+    </div>
+
+    <!-- Frage 1: Genitiv M -->
+    <div class="question-card" data-correct="0">
+        <div class="question-text">1. Это студент, <span class="gap">...</span> нет дома.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которого</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которому</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">который</button>
+        </div>
+    </div>
+
+    <!-- Frage 2: Dativ M -->
+    <div class="question-card" data-correct="1">
+        <div class="question-text">2. Вот друг, <span class="gap">...</span> я звонил.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которого</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которому</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">котором</button>
+        </div>
+    </div>
+
+    <!-- Frage 3: Instrumental F -->
+    <div class="question-card" data-correct="2">
+        <div class="question-text">3. Девушка, с <span class="gap">...</span> ты говорил, красивая.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которая</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которую</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которой</button>
+        </div>
+    </div>
+
+    <!-- Frage 4: Präpositiv M -->
+    <div class="question-card" data-correct="1">
+        <div class="question-text">4. Фильм, о <span class="gap">...</span> мы говорили.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которому</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">котором</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которого</button>
+        </div>
+    </div>
+
+    <!-- Frage 5: Akkusativ F -->
+    <div class="question-card" data-correct="0">
+        <div class="question-text">5. Я читаю книгу, <span class="gap">...</span> ты купил.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которую</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которой</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которая</button>
+        </div>
+    </div>
+
+    <!-- Frage 6: Nominativ Plural -->
+    <div class="question-card" data-correct="2">
+        <div class="question-text">6. Вот люди, <span class="gap">...</span> здесь работают.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которых</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которым</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которые</button>
+        </div>
+    </div>
+
+    <!-- Frage 7: Akkusativ M (unbelebt) -->
+    <div class="question-card" data-correct="0">
+        <div class="question-text">7. Где журнал, <span class="gap">...</span> ты читаешь?</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">который</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которого</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которому</button>
+        </div>
+    </div>
+
+    <!-- Frage 8: Nominativ N -->
+    <div class="question-card" data-correct="1">
+        <div class="question-text">8. Окно, <span class="gap">...</span> открыто, большое.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">который</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которое</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которая</button>
+        </div>
+    </div>
+
+    <!-- Frage 9: Genitiv Plural (Mengenangabe/Negation) -->
+    <div class="question-card" data-correct="0">
+        <div class="question-text">9. Это студенты, <span class="gap">...</span> сегодня нет.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которых</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которые</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которым</button>
+        </div>
+    </div>
+
+    <!-- Frage 10: Dativ F -->
+    <div class="question-card" data-correct="2">
+        <div class="question-text">10. Подруга, к <span class="gap">...</span> я иду, живет близко.</div>
+        <div class="options-container">
+            <button class="option-btn" onclick="checkAnswer(this, 0)">которую</button>
+            <button class="option-btn" onclick="checkAnswer(this, 1)">которая</button>
+            <button class="option-btn" onclick="checkAnswer(this, 2)">которой</button>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="control-btn btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="control-btn btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswer(btn, optionIndex) {
+        const card = btn.closest('.question-card');
+        const correctIndex = parseInt(card.getAttribute('data-correct'));
+        const allBtns = card.querySelectorAll('.option-btn');
+
+        // Reset vorheriger Status in dieser Karte
+        allBtns.forEach(b => {
+            b.classList.remove('correct', 'incorrect');
+            // Deaktivieren, damit man nicht wild herumklickt (optional, hier lassen wir Korrektur zu)
+        });
+
+        if (optionIndex === correctIndex) {
+            btn.classList.add('correct');
+        } else {
+            btn.classList.add('incorrect');
+        }
+    }
+
+    function resetExercise() {
+        const allBtns = document.querySelectorAll('.option-btn');
+        allBtns.forEach(btn => {
+            btn.classList.remove('correct', 'incorrect');
+        });
+    }
+
+    function showSolution() {
+        // Erst alles zurücksetzen
+        resetExercise();
+
+        const cards = document.querySelectorAll('.question-card');
+        cards.forEach(card => {
+            const correctIndex = parseInt(card.getAttribute('data-correct'));
+            const btns = card.querySelectorAll('.option-btn');
+            
+            // Richtigen Button markieren
+            if (btns[correctIndex]) {
+                btns[correctIndex].classList.add('correct');
+            }
+        });
+    }
+</script>
+
+</body>
+</html>
