@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Bezugswort finden</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --highlight-color: #e3f2fd; /* Hellblau für Auswahl */
+            --highlight-border: #2196f3;
+            --text-color: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Sätze und Wörter --- */
+        .sentence-row {
+            margin-bottom: 20px;
+            padding: 20px;
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1.3rem; /* Etwas größer, da keine Übersetzung mehr da ist */
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        /* Interaktive Wörter */
+        .word {
+            display: inline-block;
+            padding: 4px 8px;
+            margin: 2px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+
+        .word:hover {
+            background-color: #f0f0f0;
+        }
+
+        /* Ausgewählter Zustand (vom User angeklickt) */
+        .word.selected {
+            background-color: var(--highlight-color);
+            border-color: var(--highlight-border);
+            font-weight: bold;
+        }
+
+        /* Feedback Zustände */
+        .word.correct {
+            background-color: #c8e6c9 !important; /* Hellgrün */
+            border-color: var(--correct-color) !important;
+            color: #2e7d32;
+        }
+
+        .word.incorrect {
+            background-color: #ffcdd2 !important; /* Hellrot */
+            border-color: var(--incorrect-color) !important;
+            text-decoration: line-through;
+            opacity: 0.7;
+        }
+
+        .word.solution {
+            background-color: #bbdefb !important; /* Blau für Lösung */
+            border-color: #1976d2 !important;
+            font-weight: bold;
+        }
+
+        /* Nicht-klickbare Elemente (Kommas, Relativpronomen im Nebensatz, Satzzeichen) */
+        .static {
+            cursor: default;
+            padding: 4px 2px;
+            font-weight: 500;
+            color: #555;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: translateY(1px); }
+
+        .btn-check { background-color: var(--correct-color); }
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: #2196f3; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Bezugswort finden</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Klicken Sie in jedem Satz auf das <strong>Substantiv (Nomen)</strong> im Hauptsatz, auf das sich das Relativpronomen bezieht.</p>
+        <p><em>(Tipp: Suchen Sie das Wort, das durch den Nebensatz genauer beschrieben wird.)</em></p>
+    </div>
+
+    <!-- Satz 1 -->
+    <div class="sentence-row" id="s1">
+        <span class="word">Вот</span>
+        <span class="word" data-correct="true">студент</span>,
+        <span class="static">который</span>
+        <span class="word">читает</span>.
+    </div>
+
+    <!-- Satz 2 -->
+    <div class="sentence-row" id="s2">
+        <span class="word">Где</span>
+        <span class="word" data-correct="true">книга</span>,
+        <span class="static">которая</span>
+        <span class="word">лежала</span>
+        <span class="word">тут</span>?
+    </div>
+
+    <!-- Satz 3 -->
+    <div class="sentence-row" id="s3">
+        <span class="word">Я</span>
+        <span class="word">вижу</span>
+        <span class="word" data-correct="true">окно</span>,
+        <span class="static">которое</span>
+        <span class="word">открыто</span>.
+    </div>
+
+    <!-- Satz 4 -->
+    <div class="sentence-row" id="s4">
+        <span class="word">Это</span>
+        <span class="word" data-correct="true">люди</span>,
+        <span class="static">которые</span>
+        <span class="word">работают</span>
+        <span class="word">в</span>
+        <span class="word">офисе</span>.
+    </div>
+
+    <!-- Satz 5 -->
+    <div class="sentence-row" id="s5">
+        <span class="word">Нам</span>
+        <span class="word">нравится</span>
+        <span class="word" data-correct="true">журнал</span>,
+        <span class="static">о</span>
+        <span class="static">котором</span>
+        <span class="word">ты</span>
+        <span class="word">говорил</span>.
+    </div>
+
+    <!-- Satz 6 -->
+    <div class="sentence-row" id="s6">
+        <span class="word">Я</span>
+        <span class="word">знаю</span>
+        <span class="word" data-correct="true">женщину</span>,
+        <span class="static">с</span>
+        <span class="static">которой</span>
+        <span class="word">ты</span>
+        <span class="word">говоришь</span>.
+    </div>
+
+    <!-- Satz 7 -->
+    <div class="sentence-row" id="s7">
+        <span class="word">Вот</span>
+        <span class="word" data-correct="true">подарки</span>,
+        <span class="static">которые</span>
+        <span class="word">мы</span>
+        <span class="word">купили</span>
+        <span class="word">вчера</span>.
+    </div>
+
+    <!-- Satz 8 -->
+    <div class="sentence-row" id="s8">
+        <span class="word">Мы</span>
+        <span class="word">видим</span>
+        <span class="word" data-correct="true">друга</span>,
+        <span class="static">который</span>
+        <span class="word">идет</span>
+        <span class="word">домой</span>.
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Alle anklickbaren Wörter
+    const words = document.querySelectorAll('.word');
+
+    // Event Listener für jedes Wort
+    words.forEach(word => {
+        word.addEventListener('click', function() {
+            // Finden des Eltern-Containers (der aktuelle Satz)
+            const parentSentence = this.closest('.sentence-row');
+            
+            // Entferne 'selected' von allen anderen Wörtern in DIESEM Satz
+            const wordsInSentence = parentSentence.querySelectorAll('.word');
+            wordsInSentence.forEach(w => {
+                w.classList.remove('selected');
+                // Auch Feedback entfernen, wenn man neu wählt
+                w.classList.remove('correct', 'incorrect', 'solution');
+            });
+
+            // Füge 'selected' zum angeklickten Wort hinzu
+            this.classList.add('selected');
+        });
+    });
+
+    function checkAnswers() {
+        const sentences = document.querySelectorAll('.sentence-row');
+
+        sentences.forEach(row => {
+            const selectedWord = row.querySelector('.word.selected');
+            
+            if (selectedWord) {
+                const isCorrect = selectedWord.getAttribute('data-correct') === 'true';
+                
+                if (isCorrect) {
+                    selectedWord.classList.add('correct');
+                    selectedWord.classList.remove('selected');
+                } else {
+                    selectedWord.classList.add('incorrect');
+                }
+            }
+        });
+    }
+
+    function resetExercise() {
+        const allWords = document.querySelectorAll('.word');
+        allWords.forEach(word => {
+            word.classList.remove('selected', 'correct', 'incorrect', 'solution');
+        });
+    }
+
+    function showSolution() {
+        // Erst resetten
+        resetExercise();
+
+        // Alle richtigen Wörter markieren
+        const correctWords = document.querySelectorAll('.word[data-correct="true"]');
+        correctWords.forEach(word => {
+            word.classList.add('solution');
+        });
+    }
+</script>
+
+</body>
+</html>
