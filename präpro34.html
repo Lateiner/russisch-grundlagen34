@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Präpositionen und Pronomen</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Virtuelle Tastatur (Sticky Top) --- */
+        .keyboard-wrapper {
+            position: sticky;
+            top: 10px;
+            z-index: 1000;
+            margin-bottom: 30px;
+        }
+
+        .keyboard-container {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            border: 1px solid #ccc;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            flex-wrap: wrap; 
+        }
+
+        .key {
+            background-color: #fff;
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 8px 0;
+            width: 30px; /* Basisbreite */
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            user-select: none;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+            font-size: 1rem;
+            transition: transform 0.1s, background-color 0.1s;
+        }
+
+        .key:active {
+            transform: translateY(2px);
+            background-color: #ddd;
+            box-shadow: none;
+        }
+
+        .key:hover {
+            background-color: #f5f5f5;
+        }
+        
+        .key.wide {
+            width: auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            background-color: #ffccbc;
+        }
+
+        /* --- Sätze --- */
+        .sentence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .sentence-item {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 15px 10px;
+            font-size: 1.15rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Eingabefelder */
+        input.cyrillic-input {
+            padding: 6px 8px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background-color: #fafafa;
+            text-align: center;
+        }
+
+        /* Präpositions-Feld (kurz) */
+        input.prep-input {
+            width: 50px;
+        }
+
+        /* Pronomen-Feld (länger) */
+        input.pron-input {
+            width: 130px;
+        }
+
+        /* Fokus */
+        input.cyrillic-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(63, 81, 181, 0.2);
+        }
+
+        /* Feedback Farben */
+        input.correct {
+            border-color: var(--correct-color) !important;
+            background-color: #e8f5e9 !important;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        input.incorrect {
+            border-color: var(--incorrect-color) !important;
+            background-color: #ffebee !important;
+            color: #c62828;
+        }
+
+        .translation {
+            font-size: 0.9rem;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-style: italic;
+            white-space: nowrap;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        @media (max-width: 600px) {
+            .key {
+                width: 8vw;
+                height: 38px;
+                padding: 6px 0;
+            }
+            .sentence-item {
+                font-size: 1rem;
+            }
+            input.pron-input {
+                width: 110px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Präpositionen & Pronomen ergänzen</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Ergänzen Sie die Präposition und das Relativpronomen.</p>
+        <p><strong>Bedienung:</strong> Klicken Sie in ein Feld und nutzen Sie die Tastatur oben.</p>
+        <p><strong>Feedback:</strong> <span style="color: green; font-weight: bold">Grün</span> = Richtig (sofort), <span style="color: red; font-weight: bold">Rot</span> = Falsch (nach Verlassen des Feldes).</p>
+    </div>
+
+    <!-- Virtuelle Tastatur -->
+    <div class="keyboard-wrapper">
+        <div class="keyboard-container" id="virtual-keyboard">
+            <div class="keyboard-row">
+                <div class="key">й</div><div class="key">ц</div><div class="key">у</div><div class="key">к</div><div class="key">е</div><div class="key">н</div><div class="key">г</div><div class="key">ш</div><div class="key">щ</div><div class="key">з</div><div class="key">х</div><div class="key">ъ</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key">ф</div><div class="key">ы</div><div class="key">в</div><div class="key">а</div><div class="key">п</div><div class="key">р</div><div class="key">о</div><div class="key">л</div><div class="key">д</div><div class="key">ж</div><div class="key">э</div>
+            </div>
+            <div class="keyboard-row">
+                <div class="key">я</div><div class="key">ч</div><div class="key">с</div><div class="key">м</div><div class="key">и</div><div class="key">т</div><div class="key">ь</div><div class="key">б</div><div class="key">ю</div>
+                <div class="key wide" id="key-backspace">⌫</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="sentence-list">
+        <!-- Satz 1 -->
+        <div class="sentence-item">
+            1. Это друг, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="с">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которым">
+            я говорю.
+            <span class="translation">(mit dem)</span>
+        </div>
+        
+        <!-- Satz 2 -->
+        <div class="sentence-item">
+            2. Вот фильм, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="о">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="котором">
+            все говорят.
+            <span class="translation">(über den)</span>
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="sentence-item">
+            3. Школа, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="в">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которой">
+            я учусь.
+            <span class="translation">(in der)</span>
+        </div>
+
+        <!-- Satz 4 -->
+        <div class="sentence-item">
+            4. Врач, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="к">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которому">
+            я иду.
+            <span class="translation">(zu dem)</span>
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="sentence-item">
+            5. Студент, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="без">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которого">
+            мы не начнем.
+            <span class="translation">(ohne den)</span>
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="sentence-item">
+            6. Девушка, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="с">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которой">
+            он танцует.
+            <span class="translation">(mit der)</span>
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="sentence-item">
+            7. Дом, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="в">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="котором">
+            он живет.
+            <span class="translation">(in dem)</span>
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="sentence-item">
+            8. Книги, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="о">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которых">
+            мы спорим.
+            <span class="translation">(über die)</span>
+        </div>
+
+        <!-- Satz 9 -->
+        <div class="sentence-item">
+            9. Работа, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="для">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="которой">
+            мне нужно время.
+            <span class="translation">(für die)</span>
+        </div>
+
+        <!-- Satz 10 -->
+        <div class="sentence-item">
+            10. Парк, 
+            <input type="text" class="cyrillic-input prep-input" inputmode="none" data-correct="в">
+            <input type="text" class="cyrillic-input pron-input" inputmode="none" data-correct="который">
+            мы идем.
+            <span class="translation">(in den - Wohin?)</span>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="ctrl-btn btn-reset" onclick="resetAll()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveAll()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    let activeInput = null;
+    const inputs = document.querySelectorAll('.cyrillic-input');
+
+    // 1. Eingabefelder verwalten
+    inputs.forEach(input => {
+        // Fokus-Tracking
+        input.addEventListener('focus', () => {
+            activeInput = input;
+        });
+        
+        // Klick-Tracking (für Mobile wichtig)
+        input.addEventListener('click', () => {
+            activeInput = input;
+        });
+
+        // LOGIK FÜR SOFORTIGES FEEDBACK
+        
+        // A) Beim Tippen: Grün wenn richtig, sonst neutral
+        input.addEventListener('input', () => {
+            const val = input.value.trim().toLowerCase();
+            const correct = input.getAttribute('data-correct').toLowerCase();
+
+            if (val === correct) {
+                input.classList.add('correct');
+                input.classList.remove('incorrect');
+            } else {
+                input.classList.remove('correct');
+                input.classList.remove('incorrect');
+            }
+        });
+
+        // B) Beim Verlassen: Rot wenn falsch
+        input.addEventListener('blur', () => {
+            const val = input.value.trim().toLowerCase();
+            const correct = input.getAttribute('data-correct').toLowerCase();
+            
+            if (val.length > 0 && val !== correct) {
+                input.classList.add('incorrect');
+            }
+        });
+    });
+
+    // 2. Virtuelle Tastatur Logik
+    const keys = document.querySelectorAll('.key');
+    
+    keys.forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Fokus im Input behalten
+            
+            // Wenn noch kein Feld aktiv ist, nimm das erste
+            if (!activeInput) {
+                activeInput = inputs[0];
+                activeInput.focus();
+            }
+
+            if (key.id === 'key-backspace') {
+                const val = activeInput.value;
+                activeInput.value = val.slice(0, -1);
+            } else {
+                const char = key.textContent;
+                activeInput.value += char;
+            }
+            
+            // Event feuern, damit Feedback-Logik anspringt
+            activeInput.dispatchEvent(new Event('input'));
+        });
+    });
+
+    // 3. Buttons
+    function resetAll() {
+        inputs.forEach(input => {
+            input.value = '';
+            input.classList.remove('correct', 'incorrect');
+        });
+        activeInput = inputs[0];
+    }
+
+    function solveAll() {
+        inputs.forEach(input => {
+            input.value = input.getAttribute('data-correct');
+            input.classList.remove('incorrect');
+            input.classList.add('correct');
+        });
+    }
+
+</script>
+
+</body>
+</html>
