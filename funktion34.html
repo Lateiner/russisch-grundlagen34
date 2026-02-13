@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Grammatische Funktion bestimmen</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Aufgaben-Karten --- */
+        .question-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: box-shadow 0.3s;
+        }
+
+        .question-card:hover {
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .sentence {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: var(--primary-color);
+            font-weight: bold;
+            text-decoration: underline;
+            text-decoration-thickness: 2px;
+        }
+
+        .question-text {
+            font-size: 0.95rem;
+            color: #666;
+            margin-bottom: 10px;
+            font-style: italic;
+        }
+
+        /* --- Optionen (Radio Buttons) --- */
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Desktop: 2 Spalten */
+            gap: 10px;
+        }
+
+        @media (max-width: 600px) {
+            .options-grid {
+                grid-template-columns: 1fr; /* Mobile: 1 Spalte */
+            }
+        }
+
+        .option-label {
+            display: flex;
+            align-items: center;
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .option-label:hover {
+            background-color: #f5f5f5;
+            border-color: #bdbdbd;
+        }
+
+        .option-label input {
+            margin-right: 10px;
+            transform: scale(1.2);
+        }
+
+        /* Feedback Styles für die Label */
+        .option-label.correct-bg {
+            background-color: rgba(76, 175, 80, 0.15);
+            border-color: var(--correct-color);
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        .option-label.incorrect-bg {
+            background-color: rgba(244, 67, 54, 0.15);
+            border-color: var(--incorrect-color);
+            opacity: 0.7;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: translateY(1px); }
+
+        .btn-check { background-color: var(--correct-color); }
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Analyse: Grammatische Funktion</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Bestimmen Sie die Funktion des markierten Relativpronomens im <strong>Nebensatz</strong>.</p>
+        <p>Fragen Sie sich: Ist es das Subjekt (wer?), das Objekt (wen/was?), steht es nach einer Präposition oder drückt es Besitz/Fehlen aus?</p>
+    </div>
+
+    <!-- Frage 1 -->
+    <div class="question-card" id="q1" data-correct="nom">
+        <div class="sentence">Это студент, <span class="highlight">который</span> читает книгу.</div>
+        <div class="question-text">Welche Funktion hat „который“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt1" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt1" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt1" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt1" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 2 -->
+    <div class="question-card" id="q2" data-correct="acc">
+        <div class="sentence">Вот книга, <span class="highlight">которую</span> я читаю.</div>
+        <div class="question-text">Welche Funktion hat „которую“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt2" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt2" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt2" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt2" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 3 -->
+    <div class="question-card" id="q3" data-correct="prep">
+        <div class="sentence">Город, <span class="highlight">в котором</span> мы живем, красивый.</div>
+        <div class="question-text">Welche Funktion hat „в котором“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt3" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt3" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt3" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt3" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 4 -->
+    <div class="question-card" id="q4" data-correct="gen">
+        <div class="sentence">Это друг, <span class="highlight">у которого</span> есть машина.</div>
+        <div class="question-text">Welche Funktion hat „у которого“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt4" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt4" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt4" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt4" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 5 -->
+    <div class="question-card" id="q5" data-correct="nom">
+        <div class="sentence">Письмо, <span class="highlight">которое</span> пришло сегодня, лежит на столе.</div>
+        <div class="question-text">Welche Funktion hat „которое“? (Achtung: Neutrum)</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt5" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt5" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt5" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt5" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 6 -->
+    <div class="question-card" id="q6" data-correct="acc">
+        <div class="sentence">Девушка, <span class="highlight">которую</span> ты видишь, моя сестра.</div>
+        <div class="question-text">Welche Funktion hat „которую“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt6" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt6" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt6" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt6" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 7 -->
+    <div class="question-card" id="q7" data-correct="prep">
+        <div class="sentence">Это фильм, <span class="highlight">о котором</span> все говорят.</div>
+        <div class="question-text">Welche Funktion hat „о котором“?</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt7" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt7" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt7" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt7" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <!-- Frage 8 -->
+    <div class="question-card" id="q8" data-correct="gen">
+        <div class="sentence">Это студент, <span class="highlight">которого</span> сегодня нет.</div>
+        <div class="question-text">Welche Funktion hat „которого“? (Negation)</div>
+        <div class="options-grid">
+            <label class="option-label"><input type="radio" name="opt8" value="nom"> Subjekt (Nominativ)</label>
+            <label class="option-label"><input type="radio" name="opt8" value="acc"> Objekt (Akkusativ)</label>
+            <label class="option-label"><input type="radio" name="opt8" value="prep"> Nach Präposition</label>
+            <label class="option-label"><input type="radio" name="opt8" value="gen"> Besitz/Fehlen (Genitiv)</label>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-check" onclick="checkAnswers()">Überprüfen</button>
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswers() {
+        const questions = document.querySelectorAll('.question-card');
+
+        questions.forEach(card => {
+            const correctAnswer = card.getAttribute('data-correct');
+            const selectedOption = card.querySelector('input[type="radio"]:checked');
+            const allOptions = card.querySelectorAll('.option-label');
+
+            // Reset styles first
+            allOptions.forEach(opt => {
+                opt.classList.remove('correct-bg', 'incorrect-bg');
+            });
+
+            if (selectedOption) {
+                if (selectedOption.value === correctAnswer) {
+                    selectedOption.parentElement.classList.add('correct-bg');
+                } else {
+                    selectedOption.parentElement.classList.add('incorrect-bg');
+                }
+            }
+        });
+    }
+
+    function resetExercise() {
+        const questions = document.querySelectorAll('.question-card');
+        questions.forEach(card => {
+            const radios = card.querySelectorAll('input[type="radio"]');
+            radios.forEach(r => r.checked = false);
+            
+            const labels = card.querySelectorAll('.option-label');
+            labels.forEach(l => l.classList.remove('correct-bg', 'incorrect-bg'));
+        });
+    }
+
+    function showSolution() {
+        const questions = document.querySelectorAll('.question-card');
+
+        questions.forEach(card => {
+            const correctAnswer = card.getAttribute('data-correct');
+            const allRadios = card.querySelectorAll('input[type="radio"]');
+            
+            // Erst resetten
+            const labels = card.querySelectorAll('.option-label');
+            labels.forEach(l => l.classList.remove('correct-bg', 'incorrect-bg'));
+
+            // Richtige Antwort setzen und stylen
+            allRadios.forEach(radio => {
+                if (radio.value === correctAnswer) {
+                    radio.checked = true;
+                    radio.parentElement.classList.add('correct-bg');
+                }
+            });
+        });
+    }
+</script>
+
+</body>
+</html>
