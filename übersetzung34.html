@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Übersetzung & Kasuslogik</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Aufgaben-Container --- */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .task-card {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: all 0.3s ease;
+        }
+
+        /* Deutscher Satz (Quelle) */
+        .german-source {
+            font-size: 1.1rem;
+            color: #555;
+            margin-bottom: 10px;
+            font-style: italic;
+            border-left: 3px solid #999;
+            padding-left: 10px;
+        }
+
+        /* Russischer Satz mit Lücke */
+        .russian-target {
+            font-size: 1.3rem;
+            font-weight: 500;
+            margin-bottom: 15px;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* Die Lücke im Text */
+        .gap-spot {
+            display: inline-block;
+            min-width: 100px;
+            height: 36px;
+            border-bottom: 2px solid var(--primary-color);
+            text-align: center;
+            color: var(--primary-color);
+            font-weight: bold;
+            padding: 0 5px;
+            cursor: default;
+        }
+
+        /* Feedback-Zustände der Lücke */
+        .gap-spot.filled-correct {
+            border-bottom-color: var(--correct-color);
+            color: var(--correct-color);
+            border-bottom-width: 3px;
+        }
+        
+        .gap-spot.filled-correct::after {
+            content: " ✓";
+        }
+
+        .gap-spot.filled-incorrect {
+            border-bottom-color: var(--incorrect-color);
+            color: var(--incorrect-color);
+        }
+        
+        .gap-spot.filled-incorrect::after {
+            content: " ✗";
+        }
+
+        /* --- Auswahl-Optionen (Kacheln) --- */
+        .options-wrapper {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .option-tile {
+            background-color: #f5f5f5;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            padding: 8px 16px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .option-tile:hover {
+            background-color: #e3f2fd;
+            border-color: var(--primary-color);
+            transform: translateY(-2px);
+        }
+
+        .option-tile:active {
+            transform: translateY(0);
+        }
+
+        /* Deaktivierte Optionen nach Auswahl */
+        .task-card.locked .option-tile {
+            pointer-events: none;
+            opacity: 0.6;
+        }
+
+        /* Gewählte Option Styling */
+        .option-tile.selected-correct {
+            background-color: var(--correct-color);
+            color: white;
+            border-color: var(--correct-color);
+            opacity: 1 !important;
+        }
+
+        .option-tile.selected-incorrect {
+            background-color: var(--incorrect-color);
+            color: white;
+            border-color: var(--incorrect-color);
+            opacity: 1 !important;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        /* Media Queries */
+        @media (max-width: 600px) {
+            .russian-target {
+                font-size: 1.1rem;
+            }
+            .option-tile {
+                flex: 1 1 40%; /* Kacheln füllen Breite auf Handy */
+                text-align: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Übersetzung & Kasuslogik</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Übersetzen Sie den deutschen Relativsatz ins Russische, indem Sie das korrekte Wort auswählen.</p>
+        <p><strong>Fokus:</strong> Achten Sie genau auf <strong>belebt vs. unbelebt</strong> im Akkusativ und auf die korrekten Fälle!</p>
+    </div>
+
+    <div class="task-list">
+
+        <!-- Satz 1: Maskulin Belebt Akkusativ -->
+        <div class="task-card" id="task1" data-correct="которого">
+            <div class="german-source">Das ist der Student, <strong>den</strong> ich sehe.</div>
+            <div class="russian-target">
+                Это студент, <span class="gap-spot">...</span> я вижу.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task1', 'который')">который</div>
+                <div class="option-tile" onclick="checkTask('task1', 'которого')">которого</div>
+                <div class="option-tile" onclick="checkTask('task1', 'которому')">которому</div>
+            </div>
+        </div>
+
+        <!-- Satz 2: Maskulin Unbelebt Akkusativ -->
+        <div class="task-card" id="task2" data-correct="который">
+            <div class="german-source">Das ist der Tisch, <strong>den</strong> ich sehe.</div>
+            <div class="russian-target">
+                Это стол, <span class="gap-spot">...</span> я вижу.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task2', 'который')">который</div>
+                <div class="option-tile" onclick="checkTask('task2', 'которого')">которого</div>
+                <div class="option-tile" onclick="checkTask('task2', 'которому')">которому</div>
+            </div>
+        </div>
+
+        <!-- Satz 3: Feminin Akkusativ -->
+        <div class="task-card" id="task3" data-correct="которую">
+            <div class="german-source">Das ist die Frau, <strong>die</strong> ich liebe.</div>
+            <div class="russian-target">
+                Это женщина, <span class="gap-spot">...</span> я люблю.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task3', 'которая')">которая</div>
+                <div class="option-tile" onclick="checkTask('task3', 'которой')">которой</div>
+                <div class="option-tile" onclick="checkTask('task3', 'которую')">которую</div>
+            </div>
+        </div>
+
+        <!-- Satz 4: Plural Belebt Akkusativ -->
+        <div class="task-card" id="task4" data-correct="которых">
+            <div class="german-source">Das sind die Freunde, <strong>die</strong> wir kennen.</div>
+            <div class="russian-target">
+                Это друзья, <span class="gap-spot">...</span> мы знаем.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task4', 'которые')">которые</div>
+                <div class="option-tile" onclick="checkTask('task4', 'которых')">которых</div>
+                <div class="option-tile" onclick="checkTask('task4', 'которым')">которым</div>
+            </div>
+        </div>
+
+        <!-- Satz 5: Plural Unbelebt Akkusativ -->
+        <div class="task-card" id="task5" data-correct="которые">
+            <div class="german-source">Das sind die Filme, <strong>die</strong> wir schauen.</div>
+            <div class="russian-target">
+                Это фильмы, <span class="gap-spot">...</span> мы смотрим.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task5', 'которые')">которые</div>
+                <div class="option-tile" onclick="checkTask('task5', 'которых')">которых</div>
+                <div class="option-tile" onclick="checkTask('task5', 'которым')">которым</div>
+            </div>
+        </div>
+
+        <!-- Satz 6: Dativ Maskulin -->
+        <div class="task-card" id="task6" data-correct="которому">
+            <div class="german-source">Der Freund, <strong>dem</strong> ich helfe, ist nett.</div>
+            <div class="russian-target">
+                Друг, <span class="gap-spot">...</span> я помогаю, милый.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task6', 'которого')">которого</div>
+                <div class="option-tile" onclick="checkTask('task6', 'которому')">которому</div>
+                <div class="option-tile" onclick="checkTask('task6', 'который')">который</div>
+            </div>
+        </div>
+
+        <!-- Satz 7: Präposition (mit) -->
+        <div class="task-card" id="task7" data-correct="с которым">
+            <div class="german-source">Das ist der Mann, <strong>mit dem</strong> ich sprach.</div>
+            <div class="russian-target">
+                Это мужчина, <span class="gap-spot">...</span> я говорил.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task7', 'с которым')">с которым</div>
+                <div class="option-tile" onclick="checkTask('task7', 'которым')">которым</div>
+                <div class="option-tile" onclick="checkTask('task7', 'с которого')">с которого</div>
+            </div>
+        </div>
+
+        <!-- Satz 8: Genitiv Negation -->
+        <div class="task-card" id="task8" data-correct="которого">
+            <div class="german-source">Das ist der Arzt, <strong>den</strong> es heute nicht gibt.</div>
+            <div class="russian-target">
+                Это врач, <span class="gap-spot">...</span> сегодня нет.
+            </div>
+            <div class="options-wrapper">
+                <div class="option-tile" onclick="checkTask('task8', 'который')">который</div>
+                <div class="option-tile" onclick="checkTask('task8', 'которого')">которого</div>
+                <div class="option-tile" onclick="checkTask('task8', 'которому')">которому</div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="btn-container">
+        <button class="ctrl-btn btn-reset" onclick="resetAll()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveAll()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkTask(taskId, selectedValue) {
+        const card = document.getElementById(taskId);
+        
+        // Wenn bereits gelöst/blockiert, nichts tun
+        if (card.classList.contains('locked')) return;
+
+        const correctAnswer = card.getAttribute('data-correct');
+        const gapSpot = card.querySelector('.gap-spot');
+        const options = card.querySelectorAll('.option-tile');
+
+        // Text in Lücke setzen
+        gapSpot.textContent = selectedValue;
+
+        // Feedback geben
+        if (selectedValue === correctAnswer) {
+            gapSpot.classList.remove('filled-incorrect');
+            gapSpot.classList.add('filled-correct');
+            
+            // Karte sperren (optional, wenn man nur einen Versuch will. Hier lassen wir Korrektur zu, markieren aber die Auswahl)
+            // Hier markieren wir die geklickte Option visuell
+            highlightOption(options, selectedValue, 'selected-correct');
+        } else {
+            gapSpot.classList.remove('filled-correct');
+            gapSpot.classList.add('filled-incorrect');
+            highlightOption(options, selectedValue, 'selected-incorrect');
+        }
+    }
+
+    function highlightOption(options, value, className) {
+        // Erst alle zurücksetzen
+        options.forEach(opt => {
+            opt.classList.remove('selected-correct', 'selected-incorrect');
+            if (opt.textContent === value) {
+                opt.classList.add(className);
+            }
+        });
+    }
+
+    function resetAll() {
+        const cards = document.querySelectorAll('.task-card');
+        cards.forEach(card => {
+            const gapSpot = card.querySelector('.gap-spot');
+            gapSpot.textContent = '...';
+            gapSpot.classList.remove('filled-correct', 'filled-incorrect');
+            
+            const options = card.querySelectorAll('.option-tile');
+            options.forEach(opt => opt.classList.remove('selected-correct', 'selected-incorrect'));
+            
+            card.classList.remove('locked');
+        });
+    }
+
+    function solveAll() {
+        // Erst zurücksetzen
+        resetAll();
+        
+        const cards = document.querySelectorAll('.task-card');
+        cards.forEach(card => {
+            const correct = card.getAttribute('data-correct');
+            const gapSpot = card.querySelector('.gap-spot');
+            const options = card.querySelectorAll('.option-tile');
+
+            gapSpot.textContent = correct;
+            gapSpot.classList.add('filled-correct');
+
+            options.forEach(opt => {
+                if (opt.textContent === correct) {
+                    opt.classList.add('selected-correct');
+                }
+            });
+            
+            // Karte sperren, damit man die Lösung nicht überschreibt
+            card.classList.add('locked');
+        });
+    }
+</script>
+
+</body>
+</html>
