@@ -1,0 +1,570 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Wer bin ich? (10 Rätsel)</title>
+    <style>
+        :root {
+            --primary-color: #673ab7; /* Lila für Rätsel-Thema */
+            --bg-color: #f3e5f5;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+        }
+
+        .instruction-box {
+            background-color: #ede7f6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 40px;
+        }
+
+        /* --- Rätsel Karten --- */
+        .riddle-list {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+
+        .riddle-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            overflow: hidden;
+            background-color: #fff;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: transform 0.3s;
+        }
+
+        .riddle-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        /* Frage-Bereich */
+        .question-area {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 20px;
+            font-size: 1.3rem;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .highlight {
+            color: #ffeb3b; /* Gelb für Hervorhebung auf Lila */
+            font-weight: bold;
+            text-decoration: underline;
+        }
+
+        /* Übersetzung (versteckt) */
+        .translation-reveal {
+            background-color: #fff9c4;
+            color: #555;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.95rem;
+            font-style: italic;
+            border-bottom: 1px solid #e0e0e0;
+            display: none; /* Initial versteckt */
+            animation: fadeIn 0.5s;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        /* Optionen Grid */
+        .options-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+            padding: 15px;
+            background-color: #fafafa;
+        }
+
+        .option-btn {
+            background-color: #fff;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 12px 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            min-height: 70px;
+        }
+
+        .option-btn:hover {
+            background-color: #f3e5f5;
+            border-color: var(--primary-color);
+        }
+
+        .rus-word {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-bottom: 4px;
+        }
+
+        .de-word {
+            font-size: 0.85rem;
+            color: #777;
+        }
+
+        /* Feedback Zustände */
+        .option-btn.correct {
+            background-color: #e8f5e9;
+            border-color: var(--correct-color);
+            color: #2e7d32;
+        }
+        
+        .option-btn.correct .rus-word::after {
+            content: " ✓";
+        }
+
+        .option-btn.incorrect {
+            background-color: #ffebee;
+            border-color: var(--incorrect-color);
+            opacity: 0.6;
+        }
+
+        .riddle-item.solved .question-area {
+            background-color: var(--correct-color); /* Frage wird grün bei Lösung */
+            transition: background-color 0.5s;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 50px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: #2196f3; }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Wer bin ich? (10 Rätsel)</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Lesen Sie das Rätsel. Klicken Sie auf den Begriff, der beschrieben wird.</p>
+        <p><em>Tipp: Achten Sie auf das Relativpronomen (gelb markiert) – es verrät oft Fall und Geschlecht des gesuchten Wortes!</em></p>
+    </div>
+
+    <div class="riddle-list">
+
+        <!-- Rätsel 1 -->
+        <div class="riddle-item" id="r1" data-correct="Собака">
+            <div class="question-area">
+                1. Это животное, <span class="highlight">которое</span> лает.
+            </div>
+            <div class="translation-reveal">
+                (Das ist das Tier, das bellt.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r1', 'Кошка')">
+                    <span class="rus-word">Кошка</span>
+                    <span class="de-word">Katze</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r1', 'Собака')">
+                    <span class="rus-word">Собака</span>
+                    <span class="de-word">Hund</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r1', 'Мышь')">
+                    <span class="rus-word">Мышь</span>
+                    <span class="de-word">Maus</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r1', 'Рыба')">
+                    <span class="rus-word">Рыба</span>
+                    <span class="de-word">Fisch</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 2 -->
+        <div class="riddle-item" id="r2" data-correct="Врач">
+            <div class="question-area">
+                2. Это человек, <span class="highlight">который</span> лечит людей.
+            </div>
+            <div class="translation-reveal">
+                (Das ist der Mensch, der Leute heilt.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r2', 'Врач')">
+                    <span class="rus-word">Врач</span>
+                    <span class="de-word">Arzt</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r2', 'Повар')">
+                    <span class="rus-word">Повар</span>
+                    <span class="de-word">Koch</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r2', 'Учитель')">
+                    <span class="rus-word">Учитель</span>
+                    <span class="de-word">Lehrer</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r2', 'Студент')">
+                    <span class="rus-word">Студент</span>
+                    <span class="de-word">Student</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 3 -->
+        <div class="riddle-item" id="r3" data-correct="Дом">
+            <div class="question-area">
+                3. Это место, в <span class="highlight">котором</span> мы живем.
+            </div>
+            <div class="translation-reveal">
+                (Das ist der Ort, in dem wir leben.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r3', 'Парк')">
+                    <span class="rus-word">Парк</span>
+                    <span class="de-word">Park</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r3', 'Школа')">
+                    <span class="rus-word">Школа</span>
+                    <span class="de-word">Schule</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r3', 'Дом')">
+                    <span class="rus-word">Дом</span>
+                    <span class="de-word">Haus</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r3', 'Магазин')">
+                    <span class="rus-word">Магазин</span>
+                    <span class="de-word">Geschäft</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 4 -->
+        <div class="riddle-item" id="r4" data-correct="Книга">
+            <div class="question-area">
+                4. Это предмет, <span class="highlight">который</span> мы читаем.
+            </div>
+            <div class="translation-reveal">
+                (Das ist der Gegenstand, den wir lesen.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r4', 'Радио')">
+                    <span class="rus-word">Радио</span>
+                    <span class="de-word">Radio</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r4', 'Книга')">
+                    <span class="rus-word">Книга</span>
+                    <span class="de-word">Buch</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r4', 'Стол')">
+                    <span class="rus-word">Стол</span>
+                    <span class="de-word">Tisch</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r4', 'Окно')">
+                    <span class="rus-word">Окно</span>
+                    <span class="de-word">Fenster</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 5 -->
+        <div class="riddle-item" id="r5" data-correct="Машина">
+            <div class="question-area">
+                5. Это транспорт, на <span class="highlight">котором</span> мы ездим.
+            </div>
+            <div class="translation-reveal">
+                (Das ist das Transportmittel, mit dem [auf dem] wir fahren.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r5', 'Кровать')">
+                    <span class="rus-word">Кровать</span>
+                    <span class="de-word">Bett</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r5', 'Машина')">
+                    <span class="rus-word">Машина</span>
+                    <span class="de-word">Auto</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r5', 'Сумка')">
+                    <span class="rus-word">Сумка</span>
+                    <span class="de-word">Tasche</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r5', 'Мяч')">
+                    <span class="rus-word">Мяч</span>
+                    <span class="de-word">Ball</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 6 (Neu: Femininum) -->
+        <div class="riddle-item" id="r6" data-correct="Мама">
+            <div class="question-area">
+                6. Это женщина, <span class="highlight">которая</span> нас любит.
+            </div>
+            <div class="translation-reveal">
+                (Das ist die Frau, die uns liebt.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r6', 'Папа')">
+                    <span class="rus-word">Папа</span>
+                    <span class="de-word">Papa</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r6', 'Мама')">
+                    <span class="rus-word">Мама</span>
+                    <span class="de-word">Mama</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r6', 'Брат')">
+                    <span class="rus-word">Брат</span>
+                    <span class="de-word">Bruder</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r6', 'Дядя')">
+                    <span class="rus-word">Дядя</span>
+                    <span class="de-word">Onkel</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 7 (Neu: Plural) -->
+        <div class="riddle-item" id="r7" data-correct="Птицы">
+            <div class="question-area">
+                7. Это животные, <span class="highlight">которые</span> умеют летать.
+            </div>
+            <div class="translation-reveal">
+                (Das sind die Tiere, die fliegen können.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r7', 'Птицы')">
+                    <span class="rus-word">Птицы</span>
+                    <span class="de-word">Vögel</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r7', 'Рыбы')">
+                    <span class="rus-word">Рыбы</span>
+                    <span class="de-word">Fische</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r7', 'Собаки')">
+                    <span class="rus-word">Собаки</span>
+                    <span class="de-word">Hunde</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r7', 'Кошки')">
+                    <span class="rus-word">Кошки</span>
+                    <span class="de-word">Katzen</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 8 (Neu: Akkusativ, unbelebt, Femininum) -->
+        <div class="riddle-item" id="r8" data-correct="Письмо">
+            <div class="question-area">
+                8. Это вещь, <span class="highlight">которую</span> мы пишем и отправляем.
+            </div>
+            <div class="translation-reveal">
+                (Das ist das Ding, das wir schreiben und abschicken.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r8', 'Стол')">
+                    <span class="rus-word">Стол</span>
+                    <span class="de-word">Tisch</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r8', 'Окно')">
+                    <span class="rus-word">Окно</span>
+                    <span class="de-word">Fenster</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r8', 'Письмо')">
+                    <span class="rus-word">Письмо</span>
+                    <span class="de-word">Brief</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r8', 'Дом')">
+                    <span class="rus-word">Дом</span>
+                    <span class="de-word">Haus</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 9 (Neu: Instrumental) -->
+        <div class="riddle-item" id="r9" data-correct="Ложка">
+            <div class="question-area">
+                9. Это предмет, <span class="highlight">которым</span> мы едим суп.
+            </div>
+            <div class="translation-reveal">
+                (Das ist der Gegenstand, mit dem wir Suppe essen.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r9', 'Нож')">
+                    <span class="rus-word">Нож</span>
+                    <span class="de-word">Messer</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r9', 'Ложка')">
+                    <span class="rus-word">Ложка</span>
+                    <span class="de-word">Löffel</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r9', 'Вилка')">
+                    <span class="rus-word">Вилка</span>
+                    <span class="de-word">Gabel</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r9', 'Тарелка')">
+                    <span class="rus-word">Тарелка</span>
+                    <span class="de-word">Teller</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Rätsel 10 (Neu: Präpositiv Femininum) -->
+        <div class="riddle-item" id="r10" data-correct="Футбол">
+            <div class="question-area">
+                10. Это игра, о <span class="highlight">которой</span> знают все.
+            </div>
+            <div class="translation-reveal">
+                (Das ist das Spiel, über das alle Bescheid wissen.)
+            </div>
+            <div class="options-grid">
+                <button class="option-btn" onclick="checkAnswer('r10', 'Школа')">
+                    <span class="rus-word">Школа</span>
+                    <span class="de-word">Schule</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r10', 'Футбол')">
+                    <span class="rus-word">Футбол</span>
+                    <span class="de-word">Fußball</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r10', 'Сон')">
+                    <span class="rus-word">Сон</span>
+                    <span class="de-word">Schlaf</span>
+                </button>
+                <button class="option-btn" onclick="checkAnswer('r10', 'Работа')">
+                    <span class="rus-word">Работа</span>
+                    <span class="de-word">Arbeit</span>
+                </button>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="btn-container">
+        <button class="ctrl-btn btn-reset" onclick="resetAll()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveAll()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    function checkAnswer(riddleId, selectedWord) {
+        const item = document.getElementById(riddleId);
+        
+        // Wenn schon gelöst, keine Interaktion mehr (optional)
+        // if (item.classList.contains('solved')) return;
+
+        const correctWord = item.getAttribute('data-correct');
+        const buttons = item.querySelectorAll('.option-btn');
+        const translation = item.querySelector('.translation-reveal');
+
+        // Styles zurücksetzen für diesen Block
+        buttons.forEach(btn => {
+            btn.classList.remove('correct', 'incorrect');
+        });
+
+        // Button finden, der geklickt wurde
+        let clickedBtn = null;
+        buttons.forEach(btn => {
+            if (btn.querySelector('.rus-word').textContent === selectedWord) {
+                clickedBtn = btn;
+            }
+        });
+
+        if (selectedWord === correctWord) {
+            // Richtig
+            clickedBtn.classList.add('correct');
+            item.classList.add('solved');
+            translation.style.display = 'block'; // Übersetzung anzeigen
+        } else {
+            // Falsch
+            clickedBtn.classList.add('incorrect');
+        }
+    }
+
+    function resetAll() {
+        const items = document.querySelectorAll('.riddle-item');
+        items.forEach(item => {
+            item.classList.remove('solved');
+            
+            // Buttons reset
+            const buttons = item.querySelectorAll('.option-btn');
+            buttons.forEach(btn => btn.classList.remove('correct', 'incorrect'));
+            
+            // Übersetzung verstecken
+            const trans = item.querySelector('.translation-reveal');
+            trans.style.display = 'none';
+        });
+    }
+
+    function solveAll() {
+        // Erst resetten
+        resetAll();
+        
+        const items = document.querySelectorAll('.riddle-item');
+        items.forEach(item => {
+            const correctWord = item.getAttribute('data-correct');
+            const buttons = item.querySelectorAll('.option-btn');
+            const translation = item.querySelector('.translation-reveal');
+            
+            buttons.forEach(btn => {
+                if (btn.querySelector('.rus-word').textContent === correctWord) {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            item.classList.add('solved');
+            translation.style.display = 'block';
+        });
+    }
+</script>
+
+</body>
+</html>
