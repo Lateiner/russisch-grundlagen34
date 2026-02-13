@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Fehlersuche</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336; /* Rot für Fehler */
+            --warning-color: #ff9800;   /* Orange für den initialen "Fehler"-Zustand */
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        /* --- Sätze --- */
+        .sentence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sentence-item {
+            background-color: #fff;
+            border: 1px solid #eee;
+            border-left: 4px solid var(--incorrect-color); /* Markiert als "Hier ist ein Fehler" */
+            border-radius: 4px;
+            padding: 15px;
+            font-size: 1.15rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+            transition: border-color 0.3s;
+        }
+
+        /* Wenn korrigiert, wird der linke Rand grün */
+        .sentence-item.solved {
+            border-left-color: var(--correct-color);
+        }
+
+        /* Das Dropdown-Menü, das wie der Fehler aussieht */
+        select.error-select {
+            padding: 5px 10px;
+            font-size: 1.1rem;
+            border: 2px solid var(--incorrect-color); /* Initial rot umrandet */
+            border-radius: 5px;
+            background-color: #fff0f0;
+            color: #c62828;
+            font-weight: bold;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.3s;
+        }
+
+        select.error-select:focus {
+            outline: none;
+            box-shadow: 0 0 5px rgba(0,0,0,0.2);
+        }
+
+        /* Zustand: Richtig korrigiert */
+        select.error-select.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            text-decoration: none;
+        }
+
+        /* Zustand: Immer noch falsch (aber anders ausgewählt) */
+        select.error-select.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+        }
+
+        .hint {
+            font-size: 0.9rem;
+            color: #666;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-style: italic;
+            margin-left: auto; /* Schiebt Hinweis nach rechts */
+        }
+
+        .feedback-icon {
+            font-weight: bold;
+            display: inline-block;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        @media (max-width: 600px) {
+            .hint {
+                width: 100%;
+                margin-top: 5px;
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Finde und korrigiere den Fehler</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> In jedem Satz ist das Relativpronomen <strong>falsch</strong> (rot markiert).</p>
+        <p>Klicken Sie auf das falsche Wort und wählen Sie die <strong>richtige</strong> Form aus der Liste aus.</p>
+        <p>Sie erhalten <strong>sofortiges Feedback</strong>.</p>
+    </div>
+
+    <div class="sentence-list">
+        
+        <!-- Satz 1: Genus Fehler (M -> F) -->
+        <div class="sentence-item">
+            1. Это женщина, 
+            <select class="error-select" data-correct="которая" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которая">которая</option> <!-- Richtig -->
+                <option value="которое">которое</option>
+            </select>
+            поет.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Subjekt, Feminin)</span>
+        </div>
+
+        <!-- Satz 2: Kasus Fehler (Nom -> Akk belebt) -->
+        <div class="sentence-item">
+            2. Вот студент, 
+            <select class="error-select" data-correct="которого" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которого">которого</option> <!-- Richtig -->
+                <option value="которому">которому</option>
+            </select>
+            я знаю.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Objekt, Maskulin, belebt)</span>
+        </div>
+
+        <!-- Satz 3: Kasus Fehler (Akk -> Nom unbelebt) -->
+        <div class="sentence-item">
+            3. Где автобус, 
+            <select class="error-select" data-correct="который" data-initial="которого">
+                <option value="которого" selected>которого</option> <!-- Falsch -->
+                <option value="который">который</option> <!-- Richtig -->
+                <option value="которому">которому</option>
+            </select>
+            ты видишь?
+            <span class="feedback-icon"></span>
+            <span class="hint">(Objekt, Maskulin, unbelebt)</span>
+        </div>
+
+        <!-- Satz 4: Genus Fehler (M -> N) -->
+        <div class="sentence-item">
+            4. Окно, 
+            <select class="error-select" data-correct="которое" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которое">которое</option> <!-- Richtig -->
+                <option value="которая">которая</option>
+            </select>
+            открыто.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Subjekt, Neutrum)</span>
+        </div>
+
+        <!-- Satz 5: Numerus Fehler (Sg -> Pl) -->
+        <div class="sentence-item">
+            5. Люди, 
+            <select class="error-select" data-correct="которые" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которые">которые</option> <!-- Richtig -->
+                <option value="которых">которых</option>
+            </select>
+            работают здесь.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Subjekt, Plural)</span>
+        </div>
+
+        <!-- Satz 6: Kasus Fehler (Nom -> Gen nach Negation) -->
+        <div class="sentence-item">
+            6. Студент, 
+            <select class="error-select" data-correct="которого" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которого">которого</option> <!-- Richtig -->
+                <option value="которому">которому</option>
+            </select>
+            нет дома.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Genitiv, Negation)</span>
+        </div>
+
+        <!-- Satz 7: Kasus Fehler (Nom -> Präp) -->
+        <div class="sentence-item">
+            7. Фильм, о 
+            <select class="error-select" data-correct="котором" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="котором">котором</option> <!-- Richtig -->
+                <option value="которому">которому</option>
+            </select>
+            мы говорим.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Präpositiv)</span>
+        </div>
+
+        <!-- Satz 8: Kasus Fehler (Nom -> Dat) -->
+        <div class="sentence-item">
+            8. Друг, к 
+            <select class="error-select" data-correct="которому" data-initial="который">
+                <option value="который" selected>который</option> <!-- Falsch -->
+                <option value="которому">которому</option> <!-- Richtig -->
+                <option value="которого">которого</option>
+            </select>
+            я иду.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Dativ)</span>
+        </div>
+
+        <!-- Satz 9: Kasus Fehler (Akk -> Instr) -->
+        <div class="sentence-item">
+            9. Девушка, с 
+            <select class="error-select" data-correct="которой" data-initial="которую">
+                <option value="которую" selected>которую</option> <!-- Falsch -->
+                <option value="которой">которой</option> <!-- Richtig -->
+                <option value="которая">которая</option>
+            </select>
+            я гуляю.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Instrumental)</span>
+        </div>
+
+        <!-- Satz 10: Kasus Fehler (Nom -> Gen) -->
+        <div class="sentence-item">
+            10. Книга, 
+            <select class="error-select" data-correct="которой" data-initial="которая">
+                <option value="которая" selected>которая</option> <!-- Falsch -->
+                <option value="которой">которой</option> <!-- Richtig -->
+                <option value="которую">которую</option>
+            </select>
+            у меня нет.
+            <span class="feedback-icon"></span>
+            <span class="hint">(Genitiv)</span>
+        </div>
+
+    </div>
+
+    <div class="btn-container">
+        <button class="ctrl-btn btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Event Listener für sofortiges Feedback
+    document.addEventListener('DOMContentLoaded', () => {
+        const selects = document.querySelectorAll('.error-select');
+        
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                checkSelection(this);
+            });
+        });
+    });
+
+    function checkSelection(select) {
+        const correctAnswer = select.getAttribute('data-correct');
+        const selectedValue = select.value;
+        const feedbackIcon = select.parentElement.querySelector('.feedback-icon');
+        const sentenceItem = select.closest('.sentence-item');
+
+        // Styles zurücksetzen
+        select.classList.remove('correct', 'incorrect');
+        sentenceItem.classList.remove('solved');
+        feedbackIcon.textContent = '';
+        feedbackIcon.style.color = 'inherit';
+
+        if (selectedValue === correctAnswer) {
+            // Richtig
+            select.classList.add('correct');
+            sentenceItem.classList.add('solved');
+            feedbackIcon.textContent = '✓';
+            feedbackIcon.style.color = 'var(--correct-color)';
+        } else {
+            // Immer noch falsch (aber nicht mehr der Initialzustand, sondern user-gewählt)
+            select.classList.add('incorrect');
+            feedbackIcon.textContent = '✗';
+            feedbackIcon.style.color = 'var(--incorrect-color)';
+        }
+    }
+
+    function resetExercise() {
+        const selects = document.querySelectorAll('.error-select');
+        selects.forEach(select => {
+            const initialValue = select.getAttribute('data-initial');
+            select.value = initialValue;
+            
+            // UI Reset
+            select.classList.remove('correct', 'incorrect');
+            const item = select.closest('.sentence-item');
+            item.classList.remove('solved');
+            
+            const icon = item.querySelector('.feedback-icon');
+            if(icon) icon.textContent = '';
+        });
+    }
+
+    function showSolution() {
+        const selects = document.querySelectorAll('.error-select');
+        selects.forEach(select => {
+            const correctValue = select.getAttribute('data-correct');
+            select.value = correctValue;
+            
+            // Sofortiges Feedback triggern
+            checkSelection(select);
+        });
+    }
+
+</script>
+
+</body>
+</html>
