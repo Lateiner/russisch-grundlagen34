@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Satzverbindung mit Relativpronomen</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* --- Einzelne Aufgabe --- */
+        .exercise-item {
+            background-color: #fff;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .sentences-to-combine {
+            background-color: #f8f8f8;
+            border: 1px dashed #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+        }
+        .sentences-to-combine p {
+            margin: 5px 0;
+            font-size: 0.95em;
+            color: #666;
+        }
+
+        .combined-sentence {
+            font-size: 1.2em;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 5px; /* Kleinerer Abstand zwischen Wörtern/Dropdowns */
+        }
+
+        .combined-sentence .prefix,
+        .combined-sentence .suffix {
+            margin-right: 5px;
+            margin-left: 5px;
+        }
+
+        /* Dropdown Styling */
+        select {
+            padding: 6px 10px;
+            font-size: 1em;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            vertical-align: middle;
+            min-width: 80px; /* Für Präposition */
+            max-width: 150px; /* Für Pronomen */
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(63, 81, 181, 0.3);
+        }
+
+        /* Feedback Farben */
+        select.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        select.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* Feedback Icon */
+        .feedback-icon {
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+            font-weight: bold;
+            font-size: 1.2em;
+            margin-left: 5px;
+            vertical-align: middle;
+        }
+
+        /* --- Buttons pro Aufgabe --- */
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+            justify-content: flex-end; /* Buttons rechtsbündig */
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: translateY(1px); }
+
+        .btn-check { background-color: var(--correct-color); }
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        /* --- Globale Steuerungsbuttons (optional, hier nicht verwendet) --- */
+        .global-btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Satzverbindung: Relativpronomen</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Verbinden Sie die beiden kurzen Sätze zu einem Haupt- und Nebensatz. Wählen Sie die richtige Präposition (falls nötig) und die passende Form des Relativpronomens.</p>
+        <p>Denken Sie daran: Das Relativpronomen ersetzt ein Wort im zweiten Satz und muss dessen Kasus annehmen.</p>
+    </div>
+
+    <!-- Aufgabe 1: M, Dat -->
+    <div class="exercise-item" id="ex1">
+        <div class="sentences-to-combine">
+            <p>1. Вот студент.</p>
+            <p>Я дал студенту книгу.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Вот студент,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которому">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я дал книгу.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex1')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex1')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex1')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 2: F, Akk -->
+    <div class="exercise-item" id="ex2">
+        <div class="sentences-to-combine">
+            <p>2. Где книга?</p>
+            <p>Я купил книгу вчера.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Где книга,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которую">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я купил вчера?</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex2')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex2')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex2')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 3: M, Präp -->
+    <div class="exercise-item" id="ex3">
+        <div class="sentences-to-combine">
+            <p>3. Это фильм.</p>
+            <p>Мы говорим о фильме.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Это фильм,</span>
+            <select class="preposition-select" data-correct-prep="о">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="котором">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>мы говорим.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex3')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex3')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex3')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 4: F, Akk -->
+    <div class="exercise-item" id="ex4">
+        <div class="sentences-to-combine">
+            <p>4. Это подруга.</p>
+            <p>Я встретил подругу.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Это подруга,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которую">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я встретил.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex4')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex4')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex4')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 5: M, Präp -->
+    <div class="exercise-item" id="ex5">
+        <div class="sentences-to-combine">
+            <p>5. Вот дом.</p>
+            <p>Я живу в доме.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Вот дом,</span>
+            <select class="preposition-select" data-correct-prep="в">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="котором">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я живу.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex5')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex5')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex5')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 6: N, Nom -->
+    <div class="exercise-item" id="ex6">
+        <div class="sentences-to-combine">
+            <p>6. Это письмо.</p>
+            <p>Письмо пришло сегодня.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Это письмо,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которое">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>пришло сегодня.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex6')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex6')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex6')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 7: M, Akk - belebt -->
+    <div class="exercise-item" id="ex7">
+        <div class="sentences-to-combine">
+            <p>7. У меня есть брат.</p>
+            <p>Я люблю брата.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>У меня есть брат,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которого">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я люблю.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex7')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex7')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex7')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 8: F, Instr -->
+    <div class="exercise-item" id="ex8">
+        <div class="sentences-to-combine">
+            <p>8. Это девушка.</p>
+            <p>Я познакомился с девушкой.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Это девушка,</span>
+            <select class="preposition-select" data-correct-prep="с">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которой">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>я познакомился.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex8')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex8')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex8')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 9: Pl, Nom -->
+    <div class="exercise-item" id="ex9">
+        <div class="sentences-to-combine">
+            <p>9. Мы знаем людей.</p>
+            <p>Люди работают здесь.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Мы знаем людей,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которые">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>работают здесь.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex9')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex9')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex9')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+    <!-- Aufgabe 10: F, Gen -->
+    <div class="exercise-item" id="ex10">
+        <div class="sentences-to-combine">
+            <p>10. Вот газета.</p>
+            <p>У меня нет газеты.</p>
+        </div>
+        <div class="combined-sentence">
+            <span>Вот газета,</span>
+            <select class="preposition-select" data-correct-prep="">
+                <option value="">---</option>
+                <option value="с">с</option>
+                <option value="о">о</option>
+                <option value="к">к</option>
+                <option value="в">в</option>
+                <option value="у">у</option>
+            </select>
+            <select class="pronoun-select" data-correct-pronoun="которой">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+                <option value="котором">котором</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+                <option value="которое">которое</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+            </select>
+            <span>у меня нет.</span>
+            <span class="feedback-icon"></span>
+        </div>
+        <div class="btn-group">
+            <button class="btn-check" onclick="checkCombine('ex10')">Überprüfen</button>
+            <button class="btn-reset" onclick="resetCombine('ex10')">Zurücksetzen</button>
+            <button class="btn-solve" onclick="solveCombine('ex10')">Lösung anzeigen</button>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    // Event Listener für sofortiges Feedback
+    document.addEventListener('DOMContentLoaded', () => {
+        const prepositionSelects = document.querySelectorAll('.preposition-select');
+        const pronounSelects = document.querySelectorAll('.pronoun-select');
+        
+        prepositionSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                checkCombine(this.closest('.exercise-item').id);
+            });
+        });
+        pronounSelects.forEach(select => {
+            select.addEventListener('change', function() {
+                checkCombine(this.closest('.exercise-item').id);
+            });
+        });
+    });
+
+    function checkCombine(exId) {
+        const item = document.getElementById(exId);
+        const prepSelect = item.querySelector('.preposition-select');
+        const pronounSelect = item.querySelector('.pronoun-select');
+        const feedbackIcon = item.querySelector('.feedback-icon');
+
+        const correctPrep = prepSelect.getAttribute('data-correct-prep');
+        const correctPronoun = pronounSelect.getAttribute('data-correct-pronoun');
+
+        let isPrepCorrect = (prepSelect.value === correctPrep);
+        let isPronounCorrect = (pronounSelect.value === correctPronoun);
+        
+        // Reset styles
+        prepSelect.classList.remove('correct', 'incorrect');
+        pronounSelect.classList.remove('correct', 'incorrect');
+        feedbackIcon.textContent = '';
+        feedbackIcon.style.color = 'inherit';
+
+        // Apply feedback to preposition
+        if (prepSelect.value !== "") { // Only apply if something is selected
+            if (isPrepCorrect) {
+                prepSelect.classList.add('correct');
+            } else {
+                prepSelect.classList.add('incorrect');
+            }
+        }
+
+        // Apply feedback to pronoun
+        if (pronounSelect.value !== "") { // Only apply if something is selected
+            if (isPronounCorrect) {
+                pronounSelect.classList.add('correct');
+            } else {
+                pronounSelect.classList.add('incorrect');
+            }
+        }
+        
+        // Overall feedback icon
+        if (prepSelect.value === "" && pronounSelect.value === "") {
+             // Nothing selected, no overall feedback
+        } else if (isPrepCorrect && isPronounCorrect) {
+            feedbackIcon.textContent = '✓';
+            feedbackIcon.style.color = 'var(--correct-color)';
+        } else if (prepSelect.value !== "" || pronounSelect.value !== "") { // Only show X if at least one is attempted
+            feedbackIcon.textContent = '✗';
+            feedbackIcon.style.color = 'var(--incorrect-color)';
+        }
+    }
+
+    function resetCombine(exId) {
+        const item = document.getElementById(exId);
+        const prepSelect = item.querySelector('.preposition-select');
+        const pronounSelect = item.querySelector('.pronoun-select');
+        const feedbackIcon = item.querySelector('.feedback-icon');
+
+        prepSelect.value = "";
+        pronounSelect.value = "";
+        prepSelect.classList.remove('correct', 'incorrect');
+        pronounSelect.classList.remove('correct', 'incorrect');
+        feedbackIcon.textContent = '';
+        feedbackIcon.style.color = 'inherit';
+    }
+
+    function solveCombine(exId) {
+        const item = document.getElementById(exId);
+        const prepSelect = item.querySelector('.preposition-select');
+        const pronounSelect = item.querySelector('.pronoun-select');
+        const feedbackIcon = item.querySelector('.feedback-icon');
+
+        const correctPrep = prepSelect.getAttribute('data-correct-prep');
+        const correctPronoun = pronounSelect.getAttribute('data-correct-pronoun');
+
+        prepSelect.value = correctPrep;
+        pronounSelect.value = correctPronoun;
+        
+        // Apply feedback
+        prepSelect.classList.remove('incorrect');
+        prepSelect.classList.add('correct');
+        pronounSelect.classList.remove('incorrect');
+        pronounSelect.classList.add('correct');
+        
+        feedbackIcon.textContent = '✓';
+        feedbackIcon.style.color = 'var(--correct-color)';
+    }
+</script>
+
+</body>
+</html>
