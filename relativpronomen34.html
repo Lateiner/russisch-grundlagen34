@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Lückentext (Schreiben)</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        /* --- Virtuelle Tastatur --- */
+        .keyboard-container {
+            background-color: #eee;
+            padding: 10px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: inset 0 0 5px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 10px;
+            z-index: 100;
+            border: 1px solid #ccc;
+        }
+
+        .keyboard-row {
+            display: flex;
+            justify-content: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            flex-wrap: wrap; 
+        }
+
+        .key {
+            background-color: #fff;
+            border: 1px solid #999;
+            border-radius: 4px;
+            padding: 8px 0;
+            width: 30px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: bold;
+            user-select: none;
+            box-shadow: 0 2px 2px rgba(0,0,0,0.2);
+            font-size: 1rem;
+            transition: transform 0.1s, background-color 0.1s;
+        }
+
+        .key.wide {
+            width: auto;
+            padding-left: 10px;
+            padding-right: 10px;
+            background-color: #ffccbc;
+        }
+
+        .key:active {
+            transform: translateY(2px);
+            background-color: #ddd;
+            box-shadow: none;
+        }
+
+        .key:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* --- Lückentext Sätze --- */
+        .sentence-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .sentence-item {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 10px;
+            font-size: 1.1rem;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 8px;
+        }
+
+        input.cyrillic-input {
+            padding: 5px 8px;
+            font-size: 1.1rem;
+            border: 2px solid #ccc;
+            border-radius: 4px;
+            width: 140px;
+            font-family: inherit;
+            transition: all 0.2s;
+            background-color: #fafafa;
+        }
+
+        /* Aktives Eingabefeld hervorheben */
+        input.cyrillic-input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(63, 81, 181, 0.2);
+        }
+
+        /* Feedback Zustände */
+        input.correct {
+            border-color: var(--correct-color) !important;
+            background-color: #e8f5e9 !important;
+            color: #2e7d32;
+            font-weight: bold;
+            box-shadow: 0 0 5px var(--correct-color);
+        }
+
+        input.incorrect {
+            border-color: var(--incorrect-color) !important;
+            background-color: #ffebee !important;
+            color: #c62828;
+        }
+
+        .hint {
+            font-size: 0.85rem;
+            color: #777;
+            background-color: #f0f0f0;
+            padding: 2px 5px;
+            border-radius: 3px;
+            margin-left: auto;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        button.ctrl-btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button.ctrl-btn:hover { opacity: 0.9; }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        @media (max-width: 600px) {
+            .key {
+                width: 8vw;
+                height: 35px;
+                padding: 5px 0;
+            }
+            .hint {
+                margin-left: 0;
+                width: 100%;
+                margin-top: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Lückentext (Produktiv)</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Schreiben Sie das korrekte Relativpronomen in die Lücke.</p>
+        <p><strong>Bedienung:</strong> Klicken Sie in ein Feld und benutzen Sie die Tastatur oben.</p>
+        <p><strong>Feedback:</strong> Das Feld wird <span style="color: green; font-weight: bold">grün</span>, sobald das Wort richtig ist. Es wird <span style="color: red; font-weight: bold">rot</span>, wenn Sie das Feld verlassen und es falsch ist.</p>
+    </div>
+
+    <!-- Virtuelle Tastatur -->
+    <div class="keyboard-container" id="virtual-keyboard">
+        <div class="keyboard-row">
+            <div class="key">й</div><div class="key">ц</div><div class="key">у</div><div class="key">к</div><div class="key">е</div><div class="key">н</div><div class="key">г</div><div class="key">ш</div><div class="key">щ</div><div class="key">з</div><div class="key">х</div><div class="key">ъ</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key">ф</div><div class="key">ы</div><div class="key">в</div><div class="key">а</div><div class="key">п</div><div class="key">р</div><div class="key">о</div><div class="key">л</div><div class="key">д</div><div class="key">ж</div><div class="key">э</div>
+        </div>
+        <div class="keyboard-row">
+            <div class="key">я</div><div class="key">ч</div><div class="key">с</div><div class="key">м</div><div class="key">и</div><div class="key">т</div><div class="key">ь</div><div class="key">б</div><div class="key">ю</div>
+            <div class="key wide" id="key-backspace">⌫ Löschen</div>
+        </div>
+    </div>
+
+    <div class="sentence-list">
+        <!-- Satz 1 -->
+        <div class="sentence-item">
+            1. Это студент, <input type="text" class="cyrillic-input" inputmode="none" data-correct="который"> читает.
+            <span class="hint">(M, Nom)</span>
+        </div>
+        
+        <!-- Satz 2 -->
+        <div class="sentence-item">
+            2. Вот книга, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которую"> я купил.
+            <span class="hint">(F, Akk)</span>
+        </div>
+
+        <!-- Satz 3 -->
+        <div class="sentence-item">
+            3. Окно, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которое"> открыто.
+            <span class="hint">(N, Nom)</span>
+        </div>
+
+        <!-- Satz 4 -->
+        <div class="sentence-item">
+            4. Друг, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которого"> нет дома.
+            <span class="hint">(M, Gen)</span>
+        </div>
+
+        <!-- Satz 5 -->
+        <div class="sentence-item">
+            5. Девушка, с <input type="text" class="cyrillic-input" inputmode="none" data-correct="которой"> я гуляю.
+            <span class="hint">(F, Instr)</span>
+        </div>
+
+        <!-- Satz 6 -->
+        <div class="sentence-item">
+            6. Люди, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которые"> работают.
+            <span class="hint">(Pl, Nom)</span>
+        </div>
+
+        <!-- Satz 7 -->
+        <div class="sentence-item">
+            7. Фильм, о <input type="text" class="cyrillic-input" inputmode="none" data-correct="котором"> мы говорили.
+            <span class="hint">(M, Präp)</span>
+        </div>
+
+        <!-- Satz 8 -->
+        <div class="sentence-item">
+            8. Врач, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которому"> я звоню.
+            <span class="hint">(M, Dat)</span>
+        </div>
+
+        <!-- Satz 9 -->
+        <div class="sentence-item">
+            9. Студенты, <input type="text" class="cyrillic-input" inputmode="none" data-correct="которых"> я вижу.
+            <span class="hint">(Pl, Akk/Gen)</span>
+        </div>
+
+        <!-- Satz 10 -->
+        <div class="sentence-item">
+            10. Дом, <input type="text" class="cyrillic-input" inputmode="none" data-correct="который"> я строю.
+            <span class="hint">(M, Akk - unbelebt)</span>
+        </div>
+    </div>
+
+    <div class="btn-container">
+        <!-- Button "Überprüfen" entfernt, da jetzt Auto-Feedback -->
+        <button class="ctrl-btn btn-reset" onclick="resetAll()">Zurücksetzen</button>
+        <button class="ctrl-btn btn-solve" onclick="solveAll()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    let activeInput = null;
+    const inputs = document.querySelectorAll('.cyrillic-input');
+
+    // 1. Eingabefelder verwalten
+    inputs.forEach(input => {
+        
+        // Tracking des aktiven Feldes
+        input.addEventListener('focus', () => {
+            activeInput = input;
+        });
+        
+        input.addEventListener('click', () => {
+            activeInput = input;
+        });
+
+        // LOGIK FÜR SOFORTIGES FEEDBACK
+        
+        // A) Bei jeder Änderung (Tippen) prüfen:
+        input.addEventListener('input', () => {
+            const val = input.value.trim().toLowerCase();
+            const correct = input.getAttribute('data-correct').toLowerCase();
+
+            if (val === correct) {
+                // Wenn richtig: Sofort Grün
+                input.classList.add('correct');
+                input.classList.remove('incorrect');
+            } else {
+                // Wenn noch nicht fertig oder falsch: Neutral bleiben (kein Rot beim Tippen!)
+                // Aber wir entfernen "correct", falls es vorher da war
+                input.classList.remove('correct');
+                // Wichtig: Wir entfernen hier auch "incorrect", damit Korrekturen nicht rot bleiben
+                input.classList.remove('incorrect');
+            }
+        });
+
+        // B) Beim Verlassen des Feldes (Blur) prüfen:
+        input.addEventListener('blur', () => {
+            const val = input.value.trim().toLowerCase();
+            const correct = input.getAttribute('data-correct').toLowerCase();
+            
+            // Nur rot markieren, wenn etwas drin steht UND es falsch ist
+            if (val.length > 0 && val !== correct) {
+                input.classList.add('incorrect');
+            }
+        });
+    });
+
+    // Erstes Feld aktivieren (Komfort)
+    if (inputs.length > 0) {
+        // activeInput = inputs[0]; 
+    }
+
+    // 2. Virtuelle Tastatur Logik
+    const keys = document.querySelectorAll('.key');
+    
+    keys.forEach(key => {
+        key.addEventListener('mousedown', (e) => {
+            e.preventDefault(); // Verhindert Fokusverlust des Inputs
+            
+            if (!activeInput) {
+                activeInput = inputs[0];
+                activeInput.focus();
+            }
+
+            if (key.id === 'key-backspace') {
+                const val = activeInput.value;
+                activeInput.value = val.slice(0, -1);
+            } else {
+                const char = key.textContent;
+                activeInput.value += char;
+            }
+            
+            // Trigger Input Event für die Feedback-Logik
+            activeInput.dispatchEvent(new Event('input'));
+        });
+    });
+
+    // 3. Buttons
+    function resetAll() {
+        inputs.forEach(input => {
+            input.value = '';
+            input.classList.remove('correct', 'incorrect');
+        });
+        activeInput = inputs[0];
+    }
+
+    function solveAll() {
+        inputs.forEach(input => {
+            input.value = input.getAttribute('data-correct');
+            // Feedback Logik manuell triggern für Styling
+            input.classList.remove('incorrect');
+            input.classList.add('correct');
+        });
+    }
+
+</script>
+
+</body>
+</html>
