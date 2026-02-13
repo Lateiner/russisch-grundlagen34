@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Relativpronomen im Text</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 2.2; /* Höherer Zeilenabstand für Dropdowns */
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+
+        /* --- Der Textbereich --- */
+        .text-content {
+            font-size: 1.15rem;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            border: 1px solid #eee;
+            text-align: justify;
+        }
+
+        /* Dropdown Styling im Text */
+        select {
+            display: inline-block;
+            padding: 4px 8px;
+            font-size: 1rem;
+            border: 2px solid #bbb;
+            border-radius: 4px;
+            background-color: #fafafa;
+            cursor: pointer;
+            margin: 0 3px;
+            vertical-align: middle;
+            font-weight: 500;
+            font-family: inherit;
+            max-width: 100%; /* Verhindert Überlauf auf Mobile */
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 5px rgba(63, 81, 181, 0.3);
+        }
+
+        /* Feedback Farben */
+        select.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        select.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: translateY(1px); }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+        /* Mobile Optimierung */
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .text-content {
+                padding: 15px;
+                font-size: 1rem;
+                text-align: left; /* Besser lesbar auf kleinen Screens */
+            }
+            select {
+                margin: 5px 0; /* Mehr Platz auf Mobile */
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Relativpronomen im Text</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Lesen Sie den Text über Anton und seine Freunde. Wählen Sie aus den Dropdown-Menüs die grammatikalisch richtige Form von „который“ aus.</p>
+        <p>Achten Sie auf das Bezugswort im Satz davor oder im Hauptsatz. Sie erhalten <strong>sofortiges Feedback</strong> (Grün/Rot).</p>
+    </div>
+
+    <div class="text-content">
+        Привет! Меня зовут Антон. Я хочу рассказать о доме, в 
+        <select data-correct="котором">
+            <option value="">...</option>
+            <option value="котором">котором</option>
+            <option value="которой">которой</option>
+            <option value="который">который</option>
+        </select>
+        я живу. Это большой и старый дом. У меня есть друг Иван, 
+        <select data-correct="который">
+            <option value="">...</option>
+            <option value="которого">которого</option>
+            <option value="который">который</option>
+            <option value="которому">которому</option>
+        </select>
+        часто приходит ко мне в гости. Иван купил машину, 
+        <select data-correct="которую">
+            <option value="">...</option>
+            <option value="которая">которая</option>
+            <option value="которой">которой</option>
+            <option value="которую">которую</option>
+        </select>
+        он очень любит. Мы часто ездим в парк, 
+        <select data-correct="который">
+            <option value="">...</option>
+            <option value="который">который</option>
+            <option value="которого">которого</option>
+            <option value="какое">какое</option>
+        </select>
+        находится недалеко от города. В парке есть красивое озеро, 
+        <select data-correct="которое">
+            <option value="">...</option>
+            <option value="который">который</option>
+            <option value="которое">которое</option>
+            <option value="которой">которой</option>
+        </select>
+        нам очень нравится.
+        <br><br>
+        Вчера мы встретили девушку, с 
+        <select data-correct="которой">
+            <option value="">...</option>
+            <option value="которую">которую</option>
+            <option value="которая">которая</option>
+            <option value="которой">которой</option>
+        </select>
+        Иван учился в школе. Это та студентка, о 
+        <select data-correct="которой">
+            <option value="">...</option>
+            <option value="котором">котором</option>
+            <option value="которой">которой</option>
+            <option value="которую">которую</option>
+        </select>
+        он мне много рассказывал. Но у нее есть строгие родители, 
+        <select data-correct="которых">
+            <option value="">...</option>
+            <option value="которые">которые</option>
+            <option value="которых">которых</option>
+            <option value="которым">которым</option>
+        </select>
+        Иван немного боится.
+    </div>
+
+    <div class="btn-container">
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Event Listener für sofortiges Feedback
+    document.addEventListener('DOMContentLoaded', () => {
+        const selects = document.querySelectorAll('select');
+        
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                checkSingleSelect(this);
+            });
+        });
+    });
+
+    function checkSingleSelect(select) {
+        const correctAnswer = select.getAttribute('data-correct');
+        const selectedValue = select.value;
+
+        // Reset Styles
+        select.classList.remove('correct', 'incorrect');
+
+        if (selectedValue === "") {
+            return; // Nichts ausgewählt
+        }
+
+        if (selectedValue === correctAnswer) {
+            select.classList.add('correct');
+        } else {
+            select.classList.add('incorrect');
+        }
+    }
+
+    function resetExercise() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.value = "";
+            select.classList.remove('correct', 'incorrect');
+        });
+    }
+
+    function showSolution() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            const correct = select.getAttribute('data-correct');
+            select.value = correct;
+            
+            // Sofortiges visuelles Feedback
+            select.classList.remove('incorrect');
+            select.classList.add('correct');
+        });
+    }
+</script>
+
+</body>
+</html>
