@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Russisch: Lückentext mit Fallvorgabe</title>
+    <style>
+        :root {
+            --primary-color: #3f51b5;
+            --bg-color: #f4f4f9;
+            --card-bg: #ffffff;
+            --correct-color: #4caf50;
+            --incorrect-color: #f44336;
+            --solution-color: #2196f3;
+            --text-color: #333;
+            --border-color: #ccc;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: var(--card-bg);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-color);
+            text-align: center;
+            border-bottom: 2px solid var(--primary-color);
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+
+        .instruction-box {
+            background-color: #e8eaf6;
+            padding: 15px;
+            border-left: 5px solid var(--primary-color);
+            border-radius: 4px;
+            margin-bottom: 30px;
+        }
+
+        .instruction-box p {
+            margin: 5px 0;
+        }
+
+        /* --- Sätze --- */
+        .sentence-item {
+            background-color: #fff;
+            border-bottom: 1px solid #eee;
+            padding: 15px 10px;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .sentence-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Dropdown Styling */
+        select {
+            padding: 8px 12px;
+            font-size: 1rem;
+            border: 2px solid #ccc;
+            border-radius: 5px;
+            background-color: #fafafa;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-family: inherit;
+        }
+
+        select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        /* Feedback Farben */
+        select.correct {
+            border-color: var(--correct-color);
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            font-weight: bold;
+        }
+
+        select.incorrect {
+            border-color: var(--incorrect-color);
+            background-color: #ffebee;
+            color: #c62828;
+        }
+
+        /* Hinweis (Kasus) */
+        .hint {
+            font-size: 0.9rem;
+            color: #777;
+            font-weight: bold;
+            background-color: #f0f0f0;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Feedback Icon Container */
+        .feedback-icon {
+            display: inline-block;
+            width: 24px;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        /* --- Buttons --- */
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 40px;
+            flex-wrap: wrap;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+            color: white;
+            transition: opacity 0.2s, transform 0.1s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+
+        button:hover { opacity: 0.9; }
+        button:active { transform: translateY(1px); }
+
+        .btn-reset { background-color: #ff9800; }
+        .btn-solve { background-color: var(--solution-color); }
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Lückentext mit Fallvorgabe</h1>
+    
+    <div class="instruction-box">
+        <p><strong>Aufgabe:</strong> Wählen Sie die richtige Form des Relativpronomens aus.</p>
+        <p>Sie erhalten <strong>sofortiges Feedback</strong> nach der Auswahl.</p>
+        <p><em>Abkürzungen: Nom. (Nominativ), Gen. (Genitiv), Dat. (Dativ), Akk. (Akkusativ), Instr. (Instrumental), Präp. (Präpositiv).</em></p>
+    </div>
+
+    <form id="cloze-form">
+        <!-- Satz 1 (M, Nom) -->
+        <div class="sentence-item">
+            1. Вот студент, 
+            <select data-correct="который">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+            </select>
+            <span class="hint">(Nom.)</span>
+            читает книгу.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 2 (F, Akk) -->
+        <div class="sentence-item">
+            2. Где книга, 
+            <select data-correct="которую">
+                <option value="">---</option>
+                <option value="которая">которая</option>
+                <option value="которой">которой</option>
+                <option value="которую">которую</option>
+            </select>
+            <span class="hint">(Akk.)</span>
+            ты купил?
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 3 (N, Nom) -->
+        <div class="sentence-item">
+            3. Письмо, 
+            <select data-correct="которое">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которое">которое</option>
+                <option value="которого">которого</option>
+            </select>
+            <span class="hint">(Nom.)</span>
+            пришло вчера, здесь.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 4 (M, Gen) -->
+        <div class="sentence-item">
+            4. Это дом, 
+            <select data-correct="которого">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+            </select>
+            <span class="hint">(Gen.)</span>
+            нет на карте.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 5 (F, Dat) -->
+        <div class="sentence-item">
+            5. Вот подруга, к 
+            <select data-correct="которой">
+                <option value="">---</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+            </select>
+            <span class="hint">(Dat.)</span>
+            я иду.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 6 (M, Präp) -->
+        <div class="sentence-item">
+            6. Город, о 
+            <select data-correct="котором">
+                <option value="">---</option>
+                <option value="котором">котором</option>
+                <option value="который">который</option>
+                <option value="которому">которому</option>
+            </select>
+            <span class="hint">(Präp.)</span>
+            мы говорим, красивый.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 7 (M, Akk - belebt) -->
+        <div class="sentence-item">
+            7. Это брат, 
+            <select data-correct="которого">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+            </select>
+            <span class="hint">(Akk.)</span>
+            я люблю.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 8 (F, Instr) -->
+        <div class="sentence-item">
+            8. Девушка, с 
+            <select data-correct="которой">
+                <option value="">---</option>
+                <option value="которая">которая</option>
+                <option value="которую">которую</option>
+                <option value="которой">которой</option>
+            </select>
+            <span class="hint">(Instr.)</span>
+            ты танцуешь, моя сестра.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 9 (Pl, Nom) -->
+        <div class="sentence-item">
+            9. Вот люди, 
+            <select data-correct="которые">
+                <option value="">---</option>
+                <option value="которые">которые</option>
+                <option value="которых">которых</option>
+                <option value="которым">которым</option>
+            </select>
+            <span class="hint">(Nom. Pl.)</span>
+            работают здесь.
+            <span class="feedback-icon"></span>
+        </div>
+
+        <!-- Satz 10 (M, Akk - unbelebt) -->
+        <div class="sentence-item">
+            10. Это журнал, 
+            <select data-correct="который">
+                <option value="">---</option>
+                <option value="который">который</option>
+                <option value="которого">которого</option>
+                <option value="которому">которому</option>
+            </select>
+            <span class="hint">(Akk.)</span>
+            ты читаешь.
+            <span class="feedback-icon"></span>
+        </div>
+
+    </form>
+
+    <div class="btn-container">
+        <!-- Button "Überprüfen" entfernt -->
+        <button class="btn-reset" onclick="resetExercise()">Zurücksetzen</button>
+        <button class="btn-solve" onclick="showSolution()">Lösung anzeigen</button>
+    </div>
+</div>
+
+<script>
+    // Event Listener für sofortiges Feedback
+    document.addEventListener('DOMContentLoaded', () => {
+        const selects = document.querySelectorAll('select');
+        
+        selects.forEach(select => {
+            select.addEventListener('change', function() {
+                checkSingleSelect(this);
+            });
+        });
+    });
+
+    function checkSingleSelect(select) {
+        const correctAnswer = select.getAttribute('data-correct');
+        const selectedValue = select.value;
+        const feedbackSpan = select.parentElement.querySelector('.feedback-icon');
+
+        // Reset Styles
+        select.classList.remove('correct', 'incorrect');
+        feedbackSpan.textContent = '';
+        feedbackSpan.style.color = 'inherit';
+
+        if (selectedValue === "") {
+            return; // Nichts ausgewählt
+        }
+
+        if (selectedValue === correctAnswer) {
+            select.classList.add('correct');
+            feedbackSpan.textContent = '✓';
+            feedbackSpan.style.color = 'var(--correct-color)';
+        } else {
+            select.classList.add('incorrect');
+            feedbackSpan.textContent = '✗';
+            feedbackSpan.style.color = 'var(--incorrect-color)';
+        }
+    }
+
+    function resetExercise() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            select.value = "";
+            select.classList.remove('correct', 'incorrect');
+            const feedbackSpan = select.parentElement.querySelector('.feedback-icon');
+            if(feedbackSpan) feedbackSpan.textContent = '';
+        });
+    }
+
+    function showSolution() {
+        const selects = document.querySelectorAll('select');
+        selects.forEach(select => {
+            const correct = select.getAttribute('data-correct');
+            select.value = correct;
+            
+            // Sofortiges visuelles Feedback auch bei "Lösung anzeigen"
+            checkSingleSelect(select);
+        });
+    }
+</script>
+
+</body>
+</html>
